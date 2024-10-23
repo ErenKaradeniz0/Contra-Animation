@@ -8,21 +8,15 @@ ICBYTES Map, Corridor, Agent, AgentX3;
 ICBYTES AgentStanding;//Ajan ayakta dururken 
 //AJAN KOÞMA KARELERÝ ALTTAKÝ RESÝM DÝZÝNÝNE YÜKLENÝYOR
 ICBYTES AgentRun[8]; // <--Agent Running sequence will be uploaded here
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> 76c2111f6c71f8b0750cb111f2114b274063b82e
+
 
 
 int x = 120, y = 10;
 
-<<<<<<< HEAD
+
 int Agent_x = 10;
 
->>>>>>> Stashed changes
-=======
->>>>>>> 76c2111f6c71f8b0750cb111f2114b274063b82e
+
 void ICGUI_Create()
 {
 	ICG_MWSize(1300, 672);
@@ -31,15 +25,12 @@ void ICGUI_Create()
 
 void LoadAgentRun()
 {
-<<<<<<< HEAD
-<<<<<<< Updated upstream
+
 	Copy(Agent, 1, 1, 26, 44, AgentStanding);
 	PasteNon0(AgentStanding, 10, 58, Corridor);
 	ICBYTES cordinat{ {45, 9, 13,30},{71,9,16,30},{100,8,20,30},{130,8,23,30},{160,7,25,30},{189,8,22,30},
 		{218,8,25,31} };
-=======
-=======
->>>>>>> 76c2111f6c71f8b0750cb111f2114b274063b82e
+
 	
 	
 	//Copy(Map, x1, 100, x2, 370, Corridor);
@@ -47,7 +38,7 @@ void LoadAgentRun()
 	//Copy(Agent, 70, 9, 84, 34, AgentStanding);
 
 	
-<<<<<<< HEAD
+
 	Copy(AgentX3, 1, 127, 55, 109, AgentStanding); //Koþan 1
 	//Copy(AgentX3, 53, 127, 62, 109, AgentStanding); //Koþan 2
 	//Copy(AgentX3, 112, 127, 67, 109, AgentStanding); //Koþan 3
@@ -55,14 +46,13 @@ void LoadAgentRun()
 
 
 	PasteNon0(AgentStanding, 10, 250, Corridor);
-=======
+
 	Copy(AgentX3, 1, 125, 55, 109, AgentStanding); //Koþan 1
 	//Copy(AgentX3, 53, 125, 62, 109, AgentStanding); //Koþan 2
 	//Copy(AgentX3, 112, 125, 67, 109, AgentStanding); //Koþan 3
 
 	Paste(AgentStanding, 10, 250, Corridor);
->>>>>>> 76c2111f6c71f8b0750cb111f2114b274063b82e
-	DisplayImage(F1, Corridor);
+
 
 	Sleep(1000);
 	
@@ -79,33 +69,19 @@ void LoadAgentRun()
 	
 	//ICBYTES cordinat{ {45, 9, 13,30},{71,9,16,30},{100,8,20,30},{130,8,23,30},{160,7,25,30},{189,8,22,30},
 		//{218,8,25,31} };
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> 76c2111f6c71f8b0750cb111f2114b274063b82e
+
 	//for (int i = 1; i <= cordinat.Y(); i++)
 	//{
 	//	Copy(Agent, cordinat.I(1,i), cordinat.I(2, i), cordinat.I(3, i), cordinat.I(4, i), AgentRun[i-1]);
 	//	PasteNon0(AgentRun[i-1], 33*i, 58, Corridor);
 	//}
-<<<<<<< HEAD
-<<<<<<< Updated upstream
+
 	ICBYTES TV;
 	MagnifyX3(Corridor, TV);
 	DisplayImage(F1, TV);
-=======
-=======
->>>>>>> 76c2111f6c71f8b0750cb111f2114b274063b82e
-	
-	
+
 	//DisplayImage(F1, AgentStanding);
 	
-	
-
-	
-	
-	
-<<<<<<< HEAD
 	int c = 0;
 	for (int i = 0; i < 50; i++) {
 		x += 40;
@@ -121,31 +97,22 @@ void LoadAgentRun()
 		Agent_x += 3;
 		//Paste(AgentStanding, Agent_x, 250, Corridor);
 		PasteNon0(AgentStanding, Agent_x, 250, Corridor);
-=======
-	
-	for (int i = 0; i < 50; i++) {
-		x += 40;
-		Copy(Map, x, y, 800, 450, Corridor);
-		Copy(Agent, 112, 125, 67, 109, AgentStanding); //Koþan 2
->>>>>>> 76c2111f6c71f8b0750cb111f2114b274063b82e
+
 		DisplayImage(F1, Corridor);
 		Sleep(30);
 	}
 	
-	
-	
-
+	Copy(Map, x, y, 800, 450, Corridor);
+	Copy(AgentX3, 1, 127, 55, 109, AgentStanding);
+	Agent_x += 3;
+	PasteNon0(AgentStanding, Agent_x, 250, Corridor);
 	DisplayImage(F1, Corridor);
 
+	
 	
 	//DisplayImage(F1, TV);
 	
 	
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> 76c2111f6c71f8b0750cb111f2114b274063b82e
-
 }
 
 //void MakeAgentRun(void *)
