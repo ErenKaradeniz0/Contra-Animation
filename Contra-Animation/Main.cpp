@@ -8,7 +8,7 @@ int F1, F2;
 ICBYTES Map, Corridor, Agent, AgentX3;
 ICBYTES AgentStanding;
 int x = 1, y = 10;
-int Agent_x = 10;
+int Agent_x = 10, Agent_y=250;
 
 void _WaitThread(HANDLE thread);
 void _CreateThread(HANDLE thread, void* threadMain);
@@ -54,47 +54,71 @@ void* LoadAgentRun(LPVOID lpParam) {
                 c = 0;
             }
             c++;
+
             //Eren
             if (x == 401) {
+                Agent_x += 60;
+                Agent_y -= 50;
                 Copy(Map, x, y, 800, 450, Corridor);
                 Copy(AgentX3, 345, 150, 60, 75, AgentStanding);   //Flip 1
-                Sleep(200);
-                PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                PasteNon0(AgentStanding, Agent_x, Agent_y, Corridor);
                 DisplayImage(F1, Corridor);
-
+                Sleep(200);
+                
+                Agent_x += 60;
+                Agent_y -= 50;
                 Copy(Map, x, y, 800, 450, Corridor);
                 Copy(AgentX3, 405, 150, 60, 75, AgentStanding);   //Flip 2
-                PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                PasteNon0(AgentStanding, Agent_x, Agent_y, Corridor);
                 DisplayImage(F1, Corridor);
                 Sleep(200);
 
-
+                Agent_x += 60;
+                Agent_y -= 50 ;
                 Copy(Map, x, y, 800, 450, Corridor);
                 Copy(AgentX3, 465, 150, 60, 75, AgentStanding);   //Flip 3
-                PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                PasteNon0(AgentStanding, Agent_x, Agent_y, Corridor);
                 DisplayImage(F1, Corridor);
                 Sleep(200);
 
+                Agent_x += 60;
+                Agent_y += 25;
                 Copy(Map, x, y, 800, 450, Corridor);
                 Copy(AgentX3, 525, 150, 60, 75, AgentStanding);   //Flip 4
                 DisplayImage(F1, Corridor);
-                PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                PasteNon0(AgentStanding, Agent_x, Agent_y, Corridor);
                 DisplayImage(F1, Corridor);
                 Sleep(200);
+
+                Agent_x += 60;
+                Agent_y += 25;
+                Copy(Map, x, y, 800, 450, Corridor);
+                Copy(AgentX3, 525, 150, 60, 75, AgentStanding);   //Flip 4
+                DisplayImage(F1, Corridor);
+                PasteNon0(AgentStanding, Agent_x, Agent_y, Corridor);
+                DisplayImage(F1, Corridor);
+                Sleep(200);
+
+                Agent_x += 3;
+                Agent_y = 140; //Bir üs basamak konumlandýrma
+                Copy(Map, x, y, 800, 450, Corridor);
+                Copy(AgentX3, 1, 127, 55, 109, AgentStanding); //Duran Adam
+                PasteNon0(AgentStanding, Agent_x, Agent_y, Corridor);
+                DisplayImage(F1, Corridor);
+                Sleep(100);
             }
-            c++;
+
             Agent_x += 3;
-            PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+            Copy(Map, x, y, 800, 450, Corridor);
+            PasteNon0(AgentStanding, Agent_x, Agent_y, Corridor);
             DisplayImage(F1, Corridor);
-            Sleep(100);
+            Sleep(200);
+            
         }
 
-        Copy(Map, x, y, 800, 450, Corridor);
-        Copy(AgentX3, 1, 127, 55, 109, AgentStanding); //Duran Adam
-        Agent_x += 3;
-        PasteNon0(AgentStanding, Agent_x, 250, Corridor);
-        DisplayImage(F1, Corridor);
         animation_paused = true;
+        
+        
     }
     return 0;
 }
