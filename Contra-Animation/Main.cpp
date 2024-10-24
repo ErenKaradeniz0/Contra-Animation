@@ -38,39 +38,44 @@ void* LoadAgentRun(LPVOID lpParam) {
             Copy(Map, x, y, 800, 450, Corridor);
             //Deniz
             if (c == 1) {
-                Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Koþan Adam 1
+                Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Run 1
             }
             else if (c == 2) {
-                Copy(AgentX3, 112, 127, 67, 109, AgentStanding);  // Koþan Adam 2
+                Copy(AgentX3, 112, 127, 67, 109, AgentStanding);  // Run 2
             }
             else if (c == 3) {
-                Copy(AgentX3, 175, 127, 54, 109, AgentStanding);  // Koþan Adam 3
+                Copy(AgentX3, 175, 127, 54, 109, AgentStanding);  // Run 3
             }
             else if (c == 4) {
-                Copy(AgentX3, 230, 127, 56, 109, AgentStanding);  // Koþan Adam 4
+                Copy(AgentX3, 230, 127, 56, 109, AgentStanding);  // Run 4
             }
             else {
-                Copy(AgentX3, 283, 127, 68, 109, AgentStanding);  // Koþan Adam 5
+                Copy(AgentX3, 283, 127, 68, 109, AgentStanding);  // Run 5
                 c = 0;
             }
             c++;
             //Eren
             if (x == 401) {
+                Copy(Map, x, y, 800, 450, Corridor);
                 Copy(AgentX3, 345, 150, 60, 75, AgentStanding);   //Flip 1
                 Sleep(200);
                 PasteNon0(AgentStanding, Agent_x, 250, Corridor);
                 DisplayImage(F1, Corridor);
 
+                Copy(Map, x, y, 800, 450, Corridor);
                 Copy(AgentX3, 405, 150, 60, 75, AgentStanding);   //Flip 2
                 PasteNon0(AgentStanding, Agent_x, 250, Corridor);
                 DisplayImage(F1, Corridor);
                 Sleep(200);
 
+
+                Copy(Map, x, y, 800, 450, Corridor);
                 Copy(AgentX3, 465, 150, 60, 75, AgentStanding);   //Flip 3
                 PasteNon0(AgentStanding, Agent_x, 250, Corridor);
                 DisplayImage(F1, Corridor);
                 Sleep(200);
 
+                Copy(Map, x, y, 800, 450, Corridor);
                 Copy(AgentX3, 525, 150, 60, 75, AgentStanding);   //Flip 4
                 DisplayImage(F1, Corridor);
                 PasteNon0(AgentStanding, Agent_x, 250, Corridor);
