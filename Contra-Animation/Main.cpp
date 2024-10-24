@@ -18,11 +18,12 @@ void ICGUI_Create() {
 
 // Animasyon fonksiyonu
 DWORD WINAPI LoadAgentRun(LPVOID lpParam) {
-    while (thread_running) {
+    while (thread_running) { //kapalý
         if (!animation_paused) {  // Animasyon duraklatýlmamýþsa devam et
-            int c = 0;
+            int c = 1;
             Copy(Map, x, y, 800, 450, Corridor);
-            Copy(AgentX3, 1, 127, 55, 109, AgentStanding);
+           // Copy(AgentX3, 1, 127, 55, 109, AgentStanding); //Duran Adam
+            Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Koþan Adam 1
             PasteNon0(AgentStanding, Agent_x, 250, Corridor);
             DisplayImage(F1, Corridor);
             Sleep(1000);
@@ -32,12 +33,23 @@ DWORD WINAPI LoadAgentRun(LPVOID lpParam) {
                 x += 40;
                 Copy(Map, x, y, 800, 450, Corridor);
                 //Deniz
-                if (c % 2 == 0) {
-                    Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Koþan 2
+                if (c == 1) {
+                    Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Koþan Adam 1
+                }
+                else if(c==2){
+                    Copy(AgentX3, 112, 127, 67, 109, AgentStanding);  // Koþan Adam 2
+                }
+                else if (c == 3) {
+                    Copy(AgentX3, 175, 127, 54, 109, AgentStanding);  // Koþan Adam 3
+                }
+                else if (c == 4) {
+                    Copy(AgentX3, 230, 127, 56, 109, AgentStanding);  // Koþan Adam 4
                 }
                 else {
-                    Copy(AgentX3, 112, 127, 67, 109, AgentStanding);  // Koþan 3
+                    Copy(AgentX3, 283, 127, 68, 109, AgentStanding);  // Koþan Adam 5
+                    c = 0;
                 }
+                c++;
                 //Eren
                 if (x == 400) {
 
@@ -48,9 +60,9 @@ DWORD WINAPI LoadAgentRun(LPVOID lpParam) {
                 DisplayImage(F1, Corridor);
                 Sleep(100);
             }
-
+            
             Copy(Map, x, y, 800, 450, Corridor);
-            Copy(AgentX3, 1, 127, 55, 109, AgentStanding);
+            Copy(AgentX3, 1, 127, 55, 109, AgentStanding); //Duran Adam
             Agent_x += 3;
             PasteNon0(AgentStanding, Agent_x, 250, Corridor);
             DisplayImage(F1, Corridor);
