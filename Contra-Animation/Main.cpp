@@ -49,6 +49,7 @@ DWORD WINAPI LoadAgentRun(LPVOID lpParam) {
             Agent_x += 3;
             PasteNon0(AgentStanding, Agent_x, 250, Corridor);
             DisplayImage(F1, Corridor);
+            animation_paused = true;
         }
         else {
             Sleep(100);  // Thread'i meþgul etmemek için kýsa bir bekleme
@@ -84,7 +85,7 @@ void StartStopAnimation() {
 
 void ICGUI_main() {
     F1 = ICG_FrameThin(450, 100, 700, 430);
-    ReadImage("sprites/map.bmp", Map);
+    ReadImage("sprites/mapShort.bmp", Map);
     Copy(Map, x, y, 800, 450, Corridor);
     DisplayImage(F1, Corridor);
 
