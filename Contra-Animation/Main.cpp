@@ -8,7 +8,7 @@ HANDLE hThread = NULL;  // Thread handle
 int F1, F2;
 ICBYTES Map, Corridor, Agent, AgentX3;
 ICBYTES AgentStanding;
-int x = 120, y = 10;
+int x = 1, y = 10;
 int Agent_x = 10;
 
 void ICGUI_Create() {
@@ -28,6 +28,7 @@ DWORD WINAPI LoadAgentRun(LPVOID lpParam) {
             Sleep(1000);
 
             for (int i = 0; i < 50 && thread_running && !animation_paused; i++) {
+                if (x > 1600) x = 0, Agent_x = 0;
                 x += 40;
                 Copy(Map, x, y, 800, 450, Corridor);
 
