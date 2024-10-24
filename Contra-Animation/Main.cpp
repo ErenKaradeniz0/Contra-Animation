@@ -26,7 +26,7 @@ DWORD WINAPI LoadAgentRun(LPVOID lpParam) {
             Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Koþan Adam 1
             PasteNon0(AgentStanding, Agent_x, 250, Corridor);
             DisplayImage(F1, Corridor);
-            Sleep(1000);
+            Sleep(100);
 
             for (int i = 0; i < 54 && thread_running && !animation_paused; i++) {
                 if (x > 1600) x = 0, Agent_x = 0;
@@ -51,8 +51,27 @@ DWORD WINAPI LoadAgentRun(LPVOID lpParam) {
                 }
                 c++;
                 //Eren
-                if (x == 400) {
+                if (x == 401) {
+                    Copy(AgentX3, 345, 150, 60, 75, AgentStanding);   //Flip 1
+                    Sleep(200);
+                    PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                    DisplayImage(F1, Corridor);
 
+                    Copy(AgentX3, 405, 150, 60, 75, AgentStanding);   //Flip 2
+                    PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                    DisplayImage(F1, Corridor);
+                    Sleep(200);
+
+                    Copy(AgentX3, 465, 150, 60, 75, AgentStanding);   //Flip 3
+                    PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                    DisplayImage(F1, Corridor);
+                    Sleep(200);
+
+                    Copy(AgentX3, 525, 150, 60, 75, AgentStanding);   //Flip 4
+                    DisplayImage(F1, Corridor);
+                    PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                    DisplayImage(F1, Corridor);
+                    Sleep(200);
                 }
                 c++;
                 Agent_x += 3;
@@ -109,6 +128,16 @@ void ICGUI_main() {
     ReadImage("sprites/sprites.bmp", Agent);
     MagnifyX3(Agent, AgentX3);
     DisplayImage(F1, Corridor);
+
+    //BMP Pixel TEST
+    //Copy(Map, x, y, 800, 450, Corridor);
+    //Copy(AgentX3, 345, 150, 60, 75, AgentStanding);   //Flip 1
+    //Copy(AgentX3, 405, 150, 60, 75, AgentStanding);   //Flip 2
+    //Copy(AgentX3, 465, 150, 60, 75, AgentStanding     //Flip 3
+    //Copy(AgentX3, 525, 150, 60, 75, AgentStanding     //Flip 4
+    //PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+    //DisplayImage(F1, Corridor);
+    //Sleep(1000);
 
     F2 = ICG_FrameThin(10, 5, 20, 20);
     DisplayImage(F2, Agent);
