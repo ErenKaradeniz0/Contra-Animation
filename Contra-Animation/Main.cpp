@@ -1,8 +1,7 @@
 #include "icb_gui.h"
 
-// Thread'ler arasý güvenli flag deðiþkeni
-bool thread_running = false;
-bool animation_paused = false;  // Animasyonu duraklatmak için yeni flag
+
+bool animation_paused = true;  // Animasyonu duraklatmak için yeni flag
 HANDLE hThread = NULL;  // Thread handle
 
 int F1, F2;
@@ -11,112 +10,101 @@ ICBYTES AgentStanding;
 int x = 1, y = 10;
 int Agent_x = 10;
 
+void _WaitThread(HANDLE thread);
+void _CreateThread(HANDLE thread, void* threadMain);
+
 void ICGUI_Create() {
     ICG_MWSize(842, 672);
     ICG_MWTitle("Contra");
 }
 
 // Animasyon fonksiyonu
-DWORD WINAPI LoadAgentRun(LPVOID lpParam) {
-    while (thread_running) { //kapalý
-        if (!animation_paused) {  // Animasyon duraklatýlmamýþsa devam et
-            int c = 1;
+void* LoadAgentRun(LPVOID lpParam) {
+    while (!animation_paused) { // Animasyon duraklatýlmamýþsa devam et
+        int c = 1;
+        Copy(Map, x, y, 800, 450, Corridor);
+        // Copy(AgentX3, 1, 127, 55, 109, AgentStanding); //Duran Adam
+        Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Koþan Adam 1
+        PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+        DisplayImage(F1, Corridor);
+        Sleep(100);
+
+        for (int i = 0; i < 54; i++) {
+            if (animation_paused)
+                return NULL;
+
+            if (x > 1600) x = 0, Agent_x = 0;
+            x += 40;
             Copy(Map, x, y, 800, 450, Corridor);
-           // Copy(AgentX3, 1, 127, 55, 109, AgentStanding); //Duran Adam
-            Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Koþan Adam 1
-            PasteNon0(AgentStanding, Agent_x, 250, Corridor);
-            DisplayImage(F1, Corridor);
-            Sleep(100);
-
-            for (int i = 0; i < 54 && thread_running && !animation_paused; i++) {
-                if (x > 1600) x = 0, Agent_x = 0;
-                x += 40;
-                Copy(Map, x, y, 800, 450, Corridor);
-                //Deniz
-                if (c == 1) {
-                    Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Koþan Adam 1
-                }
-                else if(c==2){
-                    Copy(AgentX3, 112, 127, 67, 109, AgentStanding);  // Koþan Adam 2
-                }
-                else if (c == 3) {
-                    Copy(AgentX3, 175, 127, 54, 109, AgentStanding);  // Koþan Adam 3
-                }
-                else if (c == 4) {
-                    Copy(AgentX3, 230, 127, 56, 109, AgentStanding);  // Koþan Adam 4
-                }
-                else {
-                    Copy(AgentX3, 283, 127, 68, 109, AgentStanding);  // Koþan Adam 5
-                    c = 0;
-                }
-                c++;
-                //Eren
-                if (x == 401) {
-                    Copy(AgentX3, 345, 150, 60, 75, AgentStanding);   //Flip 1
-                    Sleep(200);
-                    PasteNon0(AgentStanding, Agent_x, 250, Corridor);
-                    DisplayImage(F1, Corridor);
-
-                    Copy(AgentX3, 405, 150, 60, 75, AgentStanding);   //Flip 2
-                    PasteNon0(AgentStanding, Agent_x, 250, Corridor);
-                    DisplayImage(F1, Corridor);
-                    Sleep(200);
-
-                    Copy(AgentX3, 465, 150, 60, 75, AgentStanding);   //Flip 3
-                    PasteNon0(AgentStanding, Agent_x, 250, Corridor);
-                    DisplayImage(F1, Corridor);
-                    Sleep(200);
-
-                    Copy(AgentX3, 525, 150, 60, 75, AgentStanding);   //Flip 4
-                    DisplayImage(F1, Corridor);
-                    PasteNon0(AgentStanding, Agent_x, 250, Corridor);
-                    DisplayImage(F1, Corridor);
-                    Sleep(200);
-                }
-                c++;
-                Agent_x += 3;
+            //Deniz
+            if (c == 1) {
+                Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Koþan Adam 1
+            }
+            else if (c == 2) {
+                Copy(AgentX3, 112, 127, 67, 109, AgentStanding);  // Koþan Adam 2
+            }
+            else if (c == 3) {
+                Copy(AgentX3, 175, 127, 54, 109, AgentStanding);  // Koþan Adam 3
+            }
+            else if (c == 4) {
+                Copy(AgentX3, 230, 127, 56, 109, AgentStanding);  // Koþan Adam 4
+            }
+            else {
+                Copy(AgentX3, 283, 127, 68, 109, AgentStanding);  // Koþan Adam 5
+                c = 0;
+            }
+            c++;
+            //Eren
+            if (x == 401) {
+                Copy(AgentX3, 345, 150, 60, 75, AgentStanding);   //Flip 1
+                Sleep(200);
                 PasteNon0(AgentStanding, Agent_x, 250, Corridor);
                 DisplayImage(F1, Corridor);
-                Sleep(100);
+
+                Copy(AgentX3, 405, 150, 60, 75, AgentStanding);   //Flip 2
+                PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                DisplayImage(F1, Corridor);
+                Sleep(200);
+
+                Copy(AgentX3, 465, 150, 60, 75, AgentStanding);   //Flip 3
+                PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                DisplayImage(F1, Corridor);
+                Sleep(200);
+
+                Copy(AgentX3, 525, 150, 60, 75, AgentStanding);   //Flip 4
+                DisplayImage(F1, Corridor);
+                PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                DisplayImage(F1, Corridor);
+                Sleep(200);
             }
-            
-            Copy(Map, x, y, 800, 450, Corridor);
-            Copy(AgentX3, 1, 127, 55, 109, AgentStanding); //Duran Adam
+            c++;
             Agent_x += 3;
             PasteNon0(AgentStanding, Agent_x, 250, Corridor);
             DisplayImage(F1, Corridor);
-            animation_paused = true;
+            Sleep(100);
         }
-        else {
-            Sleep(100);  // Thread'i meþgul etmemek için kýsa bir bekleme
-        }
+
+        Copy(Map, x, y, 800, 450, Corridor);
+        Copy(AgentX3, 1, 127, 55, 109, AgentStanding); //Duran Adam
+        Agent_x += 3;
+        PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+        DisplayImage(F1, Corridor);
+        animation_paused = true;
     }
     return 0;
 }
 
 // Animasyonu baþlat ve durdur
 void StartStopAnimation() {
-    if (!thread_running) {
-        // Thread henüz çalýþmýyorsa baþlat
-        thread_running = true;
-        animation_paused = false;
 
-        // Eðer daha önce bir thread baþlatýlmýþsa, önce onu sonlandýr
-        if (hThread != NULL) {
-            WaitForSingleObject(hThread, INFINITE);
-            CloseHandle(hThread);
-        }
+    //
+    animation_paused = !animation_paused;
 
-        // Yeni thread baþlat
-        hThread = CreateThread(NULL, 0, LoadAgentRun, NULL, 0, NULL);
-        if (hThread == NULL) {
-            ICG_printf("Thread baþlatýlamadý!");
-        }
-    }
-    else {
-        // Thread çalýþýyorsa, animasyonu duraklat/devam ettir
-        animation_paused = !animation_paused;
-    }
+    // Eðer daha önce bir thread baþlatýlmýþsa, önce onu sonlandýr
+    _WaitThread(hThread);
+
+    // Yeni thread baþlat
+    _CreateThread(hThread, LoadAgentRun);
 }
 
 void ICGUI_main() {
@@ -143,4 +131,19 @@ void ICGUI_main() {
     DisplayImage(F2, Agent);
 
     ICG_Button(544, 30, 160, 55, "Start/Stop Animation", StartStopAnimation);
+}
+
+
+void _WaitThread(HANDLE thread)
+{
+    if (thread != NULL) {
+        WaitForSingleObject(hThread, INFINITE);
+        CloseHandle(hThread);
+    }
+    thread = NULL;
+}
+
+void _CreateThread(HANDLE thread, void* threadMain)
+{
+    thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)threadMain, NULL, 0, NULL);
 }
