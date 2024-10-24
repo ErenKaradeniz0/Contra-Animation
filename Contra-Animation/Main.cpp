@@ -12,7 +12,7 @@ int x = 1, y = 10;
 int Agent_x = 10;
 
 void ICGUI_Create() {
-    ICG_MWSize(1300, 672);
+    ICG_MWSize(842, 672);
     ICG_MWTitle("Contra");
 }
 
@@ -27,16 +27,20 @@ DWORD WINAPI LoadAgentRun(LPVOID lpParam) {
             DisplayImage(F1, Corridor);
             Sleep(1000);
 
-            for (int i = 0; i < 50 && thread_running && !animation_paused; i++) {
+            for (int i = 0; i < 54 && thread_running && !animation_paused; i++) {
                 if (x > 1600) x = 0, Agent_x = 0;
                 x += 40;
                 Copy(Map, x, y, 800, 450, Corridor);
-
+                //Deniz
                 if (c % 2 == 0) {
                     Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Koþan 2
                 }
                 else {
                     Copy(AgentX3, 112, 127, 67, 109, AgentStanding);  // Koþan 3
+                }
+                //Eren
+                if (x == 400) {
+
                 }
                 c++;
                 Agent_x += 3;
@@ -85,7 +89,7 @@ void StartStopAnimation() {
 }
 
 void ICGUI_main() {
-    F1 = ICG_FrameThin(450, 100, 700, 430);
+    F1 = ICG_FrameThin(10, 130, 700, 430);
     ReadImage("sprites/mapShort.bmp", Map);
     Copy(Map, x, y, 800, 450, Corridor);
     DisplayImage(F1, Corridor);
@@ -94,8 +98,8 @@ void ICGUI_main() {
     MagnifyX3(Agent, AgentX3);
     DisplayImage(F1, Corridor);
 
-    F2 = ICG_FrameThin(5, 5, 20, 20);
+    F2 = ICG_FrameThin(10, 5, 20, 20);
     DisplayImage(F2, Agent);
 
-    ICG_Button(750, 5, 160, 55, "Start/Stop Animation", StartStopAnimation);
+    ICG_Button(544, 30, 160, 55, "Start/Stop Animation", StartStopAnimation);
 }
