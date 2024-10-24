@@ -1,7 +1,8 @@
 #include "icb_gui.h"
 
-// Thread'ler aras? güvenli flag de?i?keni
+// Thread'ler arasý güvenli flag deðiþkeni
 bool thread_running = false;
+bool animation_paused = false;  // Animasyonu duraklatmak için yeni flag
 HANDLE hThread = NULL;  // Thread handle
 
 int F1, F2;
@@ -14,61 +15,70 @@ void ICGUI_Create() {
     ICG_MWSize(1300, 672);
     ICG_MWTitle("Contra");
 }
+
 // Animasyon fonksiyonu
 DWORD WINAPI LoadAgentRun(LPVOID lpParam) {
-    while (thread_running) {  // thread_running true ise döngü devam eder
-        int c = 0;
-        for (int i = 0; i < 50 && thread_running; i++) {  // E?er thread_running false olursa döngü durur
-            x += 40;
+    while (thread_running) {
+        if (!animation_paused) {  // Animasyon duraklatýlmamýþsa devam et
+            int c = 0;
             Copy(Map, x, y, 800, 450, Corridor);
-            if (c % 2 == 0) {
-                Copy(AgentX3, 53, 127, 62, 109, AgentStanding); // Ko?an 2
-            }
-            else {
-                Copy(AgentX3, 112, 127, 67, 109, AgentStanding); // Ko?an 3
-            }
-            c++;
-            Agent_x += 3;
-            PasteNon0(AgentStanding, Agent_x, 250, Corridor); // Karakteri ekrana yap??t?r
+            Copy(AgentX3, 1, 127, 55, 109, AgentStanding);
+            PasteNon0(AgentStanding, Agent_x, 250, Corridor);
             DisplayImage(F1, Corridor);
-            Sleep(100);  // Her 100ms'de bir kare de?i?tir
-        }
+            Sleep(1000);
 
-        Copy(Map, x, y, 800, 450, Corridor);
-        Copy(AgentX3, 1, 127, 55, 109, AgentStanding);
-        Agent_x += 3;
-        PasteNon0(AgentStanding, Agent_x, 250, Corridor);
-        DisplayImage(F1, Corridor);
+            for (int i = 0; i < 50 && thread_running && !animation_paused; i++) {
+                x += 40;
+                Copy(Map, x, y, 800, 450, Corridor);
+
+                if (c % 2 == 0) {
+                    Copy(AgentX3, 53, 127, 62, 109, AgentStanding);  // Koþan 2
+                }
+                else {
+                    Copy(AgentX3, 112, 127, 67, 109, AgentStanding);  // Koþan 3
+                }
+                c++;
+                Agent_x += 3;
+                PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                DisplayImage(F1, Corridor);
+                Sleep(100);
+            }
+
+            Copy(Map, x, y, 800, 450, Corridor);
+            Copy(AgentX3, 1, 127, 55, 109, AgentStanding);
+            Agent_x += 3;
+            PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+            DisplayImage(F1, Corridor);
+        }
+        else {
+            Sleep(100);  // Thread'i meþgul etmemek için kýsa bir bekleme
+        }
     }
     return 0;
 }
 
-// Animasyonu ba?lat ve durdur
+// Animasyonu baþlat ve durdur
 void StartStopAnimation() {
     if (!thread_running) {
-        thread_running = true;  // Thread çal??maya ba?lar
+        // Thread henüz çalýþmýyorsa baþlat
+        thread_running = true;
+        animation_paused = false;
 
-        // E?er daha önce bir thread ba?lat?lm??sa, önce onu sonland?r
-        if (hThread != NULL) {
-            WaitForSingleObject(hThread, INFINITE);  // Thread sonlanmas?n? bekle
-            CloseHandle(hThread);  // Handle'? kapat
-        }
-
-        // Yeni thread ba?lat
-        hThread = CreateThread(NULL, 0, LoadAgentRun, NULL, 0, NULL);
-        if (hThread == NULL) {
-            ICG_printf("Thread ba?lat?lamad?!");
-        }
-    }
-    else {
-        thread_running = false;  // Thread'in durmas?n? sa?lar
-
-        // Thread'in sonlanmas?n? bekle ve handle'? temizle
+        // Eðer daha önce bir thread baþlatýlmýþsa, önce onu sonlandýr
         if (hThread != NULL) {
             WaitForSingleObject(hThread, INFINITE);
             CloseHandle(hThread);
-            hThread = NULL;
         }
+
+        // Yeni thread baþlat
+        hThread = CreateThread(NULL, 0, LoadAgentRun, NULL, 0, NULL);
+        if (hThread == NULL) {
+            ICG_printf("Thread baþlatýlamadý!");
+        }
+    }
+    else {
+        // Thread çalýþýyorsa, animasyonu duraklat/devam ettir
+        animation_paused = !animation_paused;
     }
 }
 
@@ -80,10 +90,8 @@ void ICGUI_main() {
 
     ReadImage("sprites/sprites.bmp", Agent);
     MagnifyX3(Agent, AgentX3);
-
     DisplayImage(F1, Corridor);
 
-    //Show Sprite
     F2 = ICG_FrameThin(5, 5, 20, 20);
     DisplayImage(F2, Agent);
 
