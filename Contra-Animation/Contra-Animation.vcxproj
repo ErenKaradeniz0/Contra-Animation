@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="sprites\map.bmp" />
+    <Image Include="sprites\mapShort.bmp" />
     <Image Include="sprites\sprites.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -26,5 +26,8 @@
     <Image Include="sprites\map.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="sprites\mapShort.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
