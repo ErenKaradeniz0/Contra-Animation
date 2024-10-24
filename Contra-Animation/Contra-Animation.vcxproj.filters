@@ -19,4 +19,12 @@
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="sprites\sprites.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="sprites\map.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
