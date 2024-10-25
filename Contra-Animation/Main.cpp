@@ -1,142 +1,203 @@
-#include<windows.h>
-#include"icb_gui.h"
+Ôªø#include "icb_gui.h"
 
-//#pragma comment (lib,"winmm.lib")
+
+bool animation_paused = true;  // Animasyonu duraklatmak i√ßin yeni flag
+HANDLE hThread = NULL;  // Thread handle
+HANDLE th = NULL;
+
 
 int F1, F2;
 ICBYTES Map, Corridor, Agent, AgentX3;
-ICBYTES AgentStanding;//Ajan ayakta dururken 
-//AJAN KOﬁMA KARELER› ALTTAK› RES›M D›Z›N›NE Y‹KLEN›YOR
-ICBYTES AgentRun[8]; // <--Agent Running sequence will be uploaded here
+ICBYTES AgentCurrent;
+int x = 1, y = 10;
+int Agent_x = 10;
+int Agent_y = 250;
+int Agent_state = 0;
+int Agent_phase = 0;
 
+void _WaitThread(HANDLE thread);
+void _CreateThread(HANDLE thread, void* threadMain);
 
-int x = 120, y = 10;
-
-void ICGUI_Create()
-{
-	ICG_MWSize(1300, 672);
-	ICG_MWTitle("Contra");
+void ICGUI_Create() {
+    ICG_MWSize(842, 672);
+    ICG_MWTitle("Contra");
 }
 
-void LoadAgentRun()
-{
-	
-	
-	//Copy(Map, x1, 100, x2, 370, Corridor);
-	
-	//Copy(Agent, 70, 9, 84, 34, AgentStanding);
+// 0 hide
+// 1 stand
+// 2 run
+//currentScene
 
-	
-	Copy(AgentX3, 1, 125, 55, 109, AgentStanding); //Ko˛an 1
-	//Copy(AgentX3, 53, 125, 62, 109, AgentStanding); //Ko˛an 2
-	//Copy(AgentX3, 112, 125, 67, 109, AgentStanding); //Ko˛an 3
-
-	Paste(AgentStanding, 10, 250, Corridor);
-	DisplayImage(F1, Corridor);
-
-	Sleep(1000);
-	
-	
-	//MagnifyX3(AgentStanding, TV);
-	//SetPixelsX2(Agent, 0, 0, 0xcccccc, AgentStanding);
-	//Impress12x20(AgentStanding, 0, 0, "x3", 0x000000);
-	
-	
-	
-	
-	
-	//Paste(TV, 10, 200, Corridor);
-	
-	//ICBYTES cordinat{ {45, 9, 13,30},{71,9,16,30},{100,8,20,30},{130,8,23,30},{160,7,25,30},{189,8,22,30},
-		//{218,8,25,31} };
-	//for (int i = 1; i <= cordinat.Y(); i++)
-	//{
-	//	Copy(Agent, cordinat.I(1,i), cordinat.I(2, i), cordinat.I(3, i), cordinat.I(4, i), AgentRun[i-1]);
-	//	PasteNon0(AgentRun[i-1], 33*i, 58, Corridor);
-	//}
-	
-	
-	//DisplayImage(F1, AgentStanding);
-	
-	
-
-	
-	
-	
-	
-	for (int i = 0; i < 50; i++) {
-		x += 40;
-		Copy(Map, x, y, 800, 450, Corridor);
-		Copy(Agent, 112, 125, 67, 109, AgentStanding); //Ko˛an 2
-		DisplayImage(F1, Corridor);
-		Sleep(30);
-	}
-	
-	
-	
-
-	DisplayImage(F1, Corridor);
-
-	
-	//DisplayImage(F1, TV);
-	
-	
-
+void SetState(int& oldState, int newState) {
+    if (oldState != newState) {
+        oldState = newState;
+        Agent_phase = 0;
+    }
+    else {
+        Agent_phase++;
+    }
 }
 
-//void MakeAgentRun(void *)
-//{
-//	int xcor=1, ycor=58;
-//	ICBYTES TV,back;
-//	int step[] = { 5,5,5,5,5,8,8 };
-//	ReadImage("impossible_mission_elevator.bmp", Corridor);
-//	Copy(Corridor, xcor, ycor, 25, 32, back);
-//	PasteNon0(AgentStanding, xcor, ycor, Corridor);
-//	MagnifyX3(Corridor, TV);
-//	DisplayImage(F1, TV);
-//	PlaySound("Another_Visitor.wav", NULL, SND_SYNC);
-//	Paste(back, xcor, ycor, Corridor);
-//	int i = 0;
-//	while(true)
-//	{
-//		Copy(Corridor, xcor, ycor, 25, 32,back);
-//		PasteNon0(AgentRun[i%7], xcor, ycor, Corridor);
-//		MagnifyX3(Corridor, TV);
-//		DisplayImage(F1, TV);
-//#ifdef _DEBUG
-//		Sleep(20);//DEBUG MODU YAVAﬁ OLDU–U ›«›N DAHA AZ BEKLET›YORUZ
-//#else
-//		Sleep(60); //Release mode is fast so we delay more
-//#endif
-//		Paste(back, xcor, ycor, Corridor);
-//		if(i%7==4)PlaySound("Step.wav", NULL, SND_ASYNC);
-//		xcor += step[i%7];
-//		i++;
-//		if (i > 52) {
-//			xcor = 1; i = 0;
-//		}
-//	}
-//}
-
-
-void ICGUI_main()
+void PrintAgent(int x, int y, int state, int Agent_phase)
 {
-	F1 = ICG_FrameThin(450, 100, 700, 430);
-	ICG_Button(750, 5, 160, 55, "Start", LoadAgentRun);
-	//ICG_TButton(580, 5, 160, 55, "Stop", NULL,NULL);
-	ReadImage("sprites/map.bmp", Map);
-	//Copy(Map, 120, 100, 600, 370, Corridor);
-	Copy(Map, x, y, 800, 450, Corridor);
+    if (state == 0) //hide
+        return;
 
-	DisplayImage(F1, Corridor);
+    else if (state == 1) //durma
+    {
+        Copy(AgentX3, 1, 20, 75, 109, AgentCurrent);
+    }
+    else if (state == 2) //ko?ma
+    {
 
-	ReadImage("sprites/sprites.bmp", Agent);
+        if (Agent_phase % 6 == 0) Copy(AgentX3, 1, 127, 55, 109, AgentCurrent);
+        if (Agent_phase % 6 == 1) Copy(AgentX3, 53, 127, 62, 109, AgentCurrent);;
+        if (Agent_phase % 6 == 2) Copy(AgentX3, 112, 127, 67, 109, AgentCurrent);
+        if (Agent_phase % 6 == 3) Copy(AgentX3, 175, 127, 54, 109, AgentCurrent);
+        //Contra takƒ±mƒ±na selam
+        if (Agent_phase % 6 == 4) Copy(AgentX3, 230, 127, 56, 109, AgentCurrent);
+        if (Agent_phase % 6 == 5) Copy(AgentX3, 283, 127, 68, 109, AgentCurrent);
 
-	MagnifyX3(Agent, AgentX3);
-	
-	//DisplayImage(F2, Corridor);
+    }
+    else if (state == 3) { //takla
 
-	//Show Sprite
-	F2 = ICG_FrameThin(5, 5, 20, 20);
-	DisplayImage(F2, Agent);
+        if (Agent_phase % 4 == 0) Copy(AgentX3, 345, 150, 60, 75, AgentCurrent);
+        else if (Agent_phase % 4 == 1) Copy(AgentX3, 405, 150, 60, 75, AgentCurrent);
+        else if (Agent_phase % 4 == 2) Copy(AgentX3, 465, 150, 60, 75, AgentCurrent);
+        else if (Agent_phase % 4 == 3) Copy(AgentX3, 525, 150, 60, 75, AgentCurrent);
+
+    }
+    PasteNon0(AgentCurrent, x, y, Corridor); // Screen
+}
+
+
+void* ScreenControllerThread(LPVOID lpParam)
+{
+    while (true)
+    {
+        Copy(Map, x, y, 800, 450, Corridor);
+        // Arkaplan √ßizilecek
+
+        //Mapteki Objeler √áizilecek
+
+        //Karakterler √áizilecek
+        PrintAgent(Agent_x, Agent_y, Agent_state, Agent_phase);
+        // Projectilelar √áizilecek
+
+        //Sahneyi Goruntule
+        DisplayImage(F1, Corridor);
+    }
+}
+
+// Animasyon fonksiyonu
+void* LoadAgentRun(LPVOID lpParam) {
+    SetState(Agent_state, 1);
+    Sleep(1000);
+    while (!animation_paused) { // Animasyon duraklat√Ωlmam√Ω√æsa devam et
+        x = 1; y = 10; Agent_x = 10; Agent_y = 250;
+        int c = 1;
+        Copy(Map, x, y, 800, 450, Corridor);
+
+        SetState(Agent_state, 2);
+        for (int i = 0; i < 12; i++) { //walk
+            if (animation_paused)
+                return NULL;
+            x += 40;
+            Sleep(150);
+            Agent_phase++;
+        }
+        SetState(Agent_state, 3);
+        for (int i = 0; i < 4; i++) {
+            switch (Agent_phase) {
+            case 0:
+                Agent_x += 60;
+                Agent_y -= 50;
+                break;
+            case 1:
+                Agent_x += 60;
+                Agent_y -= 50;
+                break;
+            case 2:
+                Agent_x += 60;
+                Agent_y += 50;
+                break;
+            case 3:
+                Agent_x += 60;
+                Agent_y -= 50;
+                Agent_state = 1;
+                break;
+            }
+            Agent_phase++;
+            Sleep(250);
+        }
+        //Extra walk
+        //SetState(Agent_state, 2);
+        //for (int i = 0; i < 8; i++) { // walk
+        //    if (animation_paused)
+        //        return NULL;
+        //    x += 40;
+        //    Agent_phase++;
+        //    Sleep(150);
+        //}
+        SetState(Agent_state, 1);
+        Sleep(500);
+    }
+    return 0;
+}
+
+// Animasyonu ba√ælat ve durdur
+void StartStopAnimation() {
+
+    //
+    animation_paused = !animation_paused;
+
+    // E√∞er daha √∂nce bir thread ba√ælat√Ωlm√Ω√æsa, √∂nce onu sonland√Ωr
+    _WaitThread(hThread);
+
+    // Yeni thread ba√ælat
+    _CreateThread(hThread, LoadAgentRun);
+}
+
+void ICGUI_main() {
+    F1 = ICG_FrameThin(10, 130, 700, 430);
+    ReadImage("sprites/mapShort.bmp", Map);
+    Copy(Map, x, y, 800, 450, Corridor);
+    DisplayImage(F1, Corridor);
+
+    ReadImage("sprites/sprites.bmp", Agent);
+    MagnifyX3(Agent, AgentX3);
+    DisplayImage(F1, Corridor);
+
+    //BMP Pixel TEST
+    Copy(Map, x, y, 800, 450, Corridor);
+    //Copy(AgentX3, 345, 150, 60, 75, AgentCurrent);   //Flip 1
+    //Copy(AgentX3, 405, 150, 60, 75, AgentCurrent);   //Flip 2
+    //Copy(AgentX3, 465, 150, 60, 75, AgentCurrent     //Flip 3
+    //Copy(AgentX3, 525, 150, 60, 75, AgentCurrent     //Flip 4
+    //PasteNon0(AgentCurrent, Agent_x, Agent_y, Corridor);
+    DisplayImage(F1, Corridor);
+    DisplayImage(F1, Corridor);
+    Sleep(1000);
+
+    F2 = ICG_FrameThin(10, 5, 20, 20);
+    DisplayImage(F2, Agent);
+
+    ICG_Button(544, 30, 160, 55, "Start/Stop Animation", StartStopAnimation);
+
+    // Yeni thread ba√ælat
+    _CreateThread(th, ScreenControllerThread);
+}
+
+void _WaitThread(HANDLE thread)
+{
+    if (thread != NULL) {
+        WaitForSingleObject(hThread, INFINITE);
+        CloseHandle(hThread);
+    }
+    thread = NULL;
+}
+
+void _CreateThread(HANDLE thread, void* threadMain)
+{
+    thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)threadMain, NULL, 0, NULL);
 }
