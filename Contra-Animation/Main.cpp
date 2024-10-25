@@ -8,10 +8,13 @@ HANDLE th = NULL;
 
 int F1, F2;
 ICBYTES Map, Corridor, Agent, AgentX3;
-ICBYTES AgentCurrent;
+ICBYTES BlueAgentCurrent;
+ICBYTES RedAgentCurrent;
 int x = 1, y = 10;
-int Agent_x = 10;
-int Agent_y = 250;
+int BlueAgentX = 10;
+int BlueAgentY = 250;
+int RedAgentX = 30;
+int RedAgentY = 250;
 int Agent_state = 0;
 int Agent_phase = 0;
 
@@ -40,46 +43,57 @@ void SetState(int &oldState,int newState) {
 
 void PrintAgent(int x, int y, int state, int Agent_phase)
 {
-    //if (state == 0) //hide
-    //    return;
+    if (state == 0) //hide
+        return;
 
-    //else if (state == 1) //durma
-    //{
-    //    Copy(AgentX3, 1, 20, 75, 109, AgentCurrent);
-    //}
-    //else if (state == 2) //ko?ma
-    //{
-    //        if (Agent_phase % 6 == 0) Copy(AgentX3, 1, 127, 55, 109, AgentCurrent);
-    //        if (Agent_phase % 6 == 1) Copy(AgentX3, 53, 127, 62, 109, AgentCurrent);;
-    //        if (Agent_phase % 6 == 2) Copy(AgentX3, 112, 127, 67, 109, AgentCurrent);
-    //        if (Agent_phase % 6 == 3) Copy(AgentX3, 175, 127, 54, 109, AgentCurrent);
-    //        //Contra takımına selam
-    //        if (Agent_phase % 6 == 4) Copy(AgentX3, 230, 127, 56, 109, AgentCurrent);
-    //        if (Agent_phase % 6 == 5) Copy(AgentX3, 283, 127, 68, 109, AgentCurrent);
+    else if (state == 1) //durma
+    {
+        Copy(AgentX3, 1, 20, 75, 109, BlueAgentCurrent);
+    }
+    else if (state == 2) //ko?ma
+    {
+            if (Agent_phase % 6 == 0) Copy(AgentX3, 1, 127, 55, 109, BlueAgentCurrent);
+            if (Agent_phase % 6 == 1) Copy(AgentX3, 53, 127, 62, 109, BlueAgentCurrent);;
+            if (Agent_phase % 6 == 2) Copy(AgentX3, 112, 127, 67, 109, BlueAgentCurrent);
+            if (Agent_phase % 6 == 3) Copy(AgentX3, 175, 127, 54, 109, BlueAgentCurrent);
+            //Contra takımına selam
+            if (Agent_phase % 6 == 4) Copy(AgentX3, 230, 127, 56, 109, BlueAgentCurrent);
+            if (Agent_phase % 6 == 5) Copy(AgentX3, 283, 127, 68, 109, BlueAgentCurrent);
 
-    //}
-    //else if (state == 3) { //takla
-
-    //    if (Agent_phase % 4 == 0) Copy(AgentX3, 345, 150, 60, 75, AgentCurrent);
-    //    else if (Agent_phase % 4 == 1) Copy(AgentX3, 405, 150, 60, 75, AgentCurrent);
-    //    else if (Agent_phase % 4 == 2) Copy(AgentX3, 465, 150, 60, 75, AgentCurrent);
-    //    else if (Agent_phase % 4 == 3) Copy(AgentX3, 525, 150, 60, 75, AgentCurrent);
-
-    //}
+    }
+    else if (state == 3) { //takla
+        if (Agent_phase % 4 == 0) { 
+            Copy(AgentX3, 345, 150, 60, 75, BlueAgentCurrent);
+            Copy(AgentX3, 832, 150, 60, 75, RedAgentCurrent);     //Red Flip 1
+        }
+        else if (Agent_phase % 4 == 1) { 
+            Copy(AgentX3, 405, 150, 60, 75, BlueAgentCurrent);
+            Copy(AgentX3, 772, 150, 60, 75, RedAgentCurrent);     //Red Flip 2
+        }
+        else if (Agent_phase % 4 == 2) { 
+            Copy(AgentX3, 465, 150, 60, 75, BlueAgentCurrent);
+            Copy(AgentX3, 712, 150, 60, 75, RedAgentCurrent);     //Red Flip 3
+        }
+        else if (Agent_phase % 4 == 3) { 
+            Copy(AgentX3, 525, 150, 60, 75, BlueAgentCurrent);
+            Copy(AgentX3, 652, 150, 60, 75, RedAgentCurrent);     //Red Flip 4
+        }
+    }
     
-    Copy(AgentX3, 832, 150, 60, 75, AgentCurrent);     //Red Flip 1
-    Copy(AgentX3, 772, 150, 60, 75, AgentCurrent);     //Red Flip 2
-    Copy(AgentX3, 712, 150, 60, 75, AgentCurrent);     //Red Flip 3
-    Copy(AgentX3, 652, 150, 60, 75, AgentCurrent);     //Red Flip 4
+    //Copy(AgentX3, 832, 150, 60, 75, BlueAgentCurrent);     //Red Flip 1
+    //Copy(AgentX3, 772, 150, 60, 75, BlueAgentCurrent);     //Red Flip 2
+    //Copy(AgentX3, 712, 150, 60, 75, BlueAgentCurrent);     //Red Flip 3
+    //Copy(AgentX3, 652, 150, 60, 75, BlueAgentCurrent);     //Red Flip 4
 
-    Copy(AgentX3, 237, 77, 100, 50, AgentCurrent); //Mavi Eğilen 1
-    Copy(AgentX3, 337, 80, 100, 50, AgentCurrent); // Mavi Eğilen 2 (Ateş etme)
+    //Copy(AgentX3, 237, 77, 100, 50, BlueAgentCurrent); //Mavi Eğilen 1
+    //Copy(AgentX3, 337, 80, 100, 50, BlueAgentCurrent); // Mavi Eğilen 2 (Ateş etme)
 
-    Copy(AgentX3, 1160, 20, 75, 109, AgentCurrent); // Kırmızı Duran
-    Copy(AgentX3, 1088, 20, 75, 109, AgentCurrent); // Kırmız Duran (Ateş etme)
+    //Copy(AgentX3, 1160, 20, 75, 109, BlueAgentCurrent); // Kırmızı Duran
+    //Copy(AgentX3, 1088, 20, 75, 109, BlueAgentCurrent); // Kırmız Duran (Ateş etme)
 
-    Paste(AgentCurrent, Agent_x, Agent_y, Corridor);
-    //PasteNon0(AgentCurrent, x, y, Corridor); // Screen
+    //Paste(BlueAgentCurrent, BlueAgentX, BlueAgentY, Corridor);
+    PasteNon0(BlueAgentCurrent, x, y, Corridor); // Screen
+    PasteNon0(RedAgentCurrent, x+200, y, Corridor); // Screen
 }
 
 void* ScreenControllerThread(LPVOID lpParam)
@@ -92,7 +106,7 @@ void* ScreenControllerThread(LPVOID lpParam)
         //Mapteki Objeler Çizilecek
 
         //Karakterler Çizilecek
-        PrintAgent(Agent_x, Agent_y, Agent_state, Agent_phase);
+        PrintAgent(BlueAgentX, BlueAgentY, Agent_state, Agent_phase);
         // Projectilelar Çizilecek
 
         //Sahneyi Goruntule
@@ -104,8 +118,8 @@ void* ScreenControllerThread(LPVOID lpParam)
 void* LoadAgentRun(LPVOID lpParam) {
     SetState(Agent_state, 1);
     Sleep(1000);
-    while (animation_paused) { // Animasyon duraklatýlmamýþsa devam et
-        x = 1; y = 10;Agent_x = 10;Agent_y = 250;
+    while (!animation_paused) { // Animasyon duraklatýlmamýþsa devam et
+        x = 1; y = 10;BlueAgentX = 10;BlueAgentY = 250;
         int c = 1;
         Copy(Map, x, y, 800, 450, Corridor);
 
@@ -121,20 +135,20 @@ void* LoadAgentRun(LPVOID lpParam) {
         for (int i = 0; i < 4; i++) {
             switch (Agent_phase) {
             case 0:
-                Agent_x += 60;
-                Agent_y -= 50;
+                BlueAgentX += 60;
+                BlueAgentY -= 50;
                 break;
             case 1:
-                Agent_x += 60;
-                Agent_y -= 50;
+                BlueAgentX += 60;
+                BlueAgentY -= 50;
                 break;
             case 2:
-                Agent_x += 60;
-                Agent_y += 50;
+                BlueAgentX += 60;
+                BlueAgentY += 50;
                 break;
             case 3:
-                Agent_x += 60;
-                Agent_y -= 50;
+                BlueAgentX += 60;
+                BlueAgentY -= 50;
                 Agent_state = 1;
                 break;
             }
@@ -181,12 +195,12 @@ void ICGUI_main() {
 
     //BMP Pixel TEST
     Copy(Map, x, y, 800, 450, Corridor);
-    //Copy(AgentX3, 345, 150, 60, 75, AgentCurrent);   //Flip 1
-    //Copy(AgentX3, 405, 150, 60, 75, AgentCurrent);   //Flip 2
-    //Copy(AgentX3, 465, 150, 60, 75, AgentCurrent     //Flip 3
-    //Copy(AgentX3, 525, 150, 60, 75, AgentCurrent     //Flip 4
-    //Copy(AgentX3, 525, 150, 60, 75, AgentCurrent);     //Flip 4
-    //PasteNon0(AgentCurrent, Agent_x, Agent_y, Corridor);
+    //Copy(AgentX3, 345, 150, 60, 75, BlueAgentCurrent);   //Flip 1
+    //Copy(AgentX3, 405, 150, 60, 75, BlueAgentCurrent);   //Flip 2
+    //Copy(AgentX3, 465, 150, 60, 75, BlueAgentCurrent     //Flip 3
+    //Copy(AgentX3, 525, 150, 60, 75, BlueAgentCurrent     //Flip 4
+    //Copy(AgentX3, 525, 150, 60, 75, BlueAgentCurrent);     //Flip 4
+    //PasteNon0(BlueAgentCurrent, BlueAgentX, BlueAgentY, Corridor);
     //DisplayImage(F1, Corridor);
     //Sleep(1000);
 
