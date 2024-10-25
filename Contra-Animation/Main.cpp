@@ -176,7 +176,7 @@ void ICGUI_main() {
     //Copy(AgentX3, 525, 150, 60, 75, AgentCurrent     //Flip 4
     //PasteNon0(AgentCurrent, Agent_x, Agent_y, Corridor);
     DisplayImage(F1, Corridor);
-
+    DisplayImage(F1, Corridor);
     Sleep(1000);
 
     F2 = ICG_FrameThin(10, 5, 20, 20);
