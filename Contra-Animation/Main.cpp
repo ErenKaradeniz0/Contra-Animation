@@ -88,9 +88,11 @@ void* ScreenControllerThread(LPVOID lpParam)
 
         //Mapteki Objeler Çizilecek
 
-        //Karakterler Çizilecek
-        PrintAgent(Agent_x, Agent_y, Agent_state, Agent_phase);
-        // Projectilelar Çizilecek
+                Copy(Map, x, y, 800, 450, Corridor);
+                Copy(AgentX3, 465, 150, 60, 75, AgentStanding);   //Flip 3
+                PasteNon0(AgentStanding, Agent_x, 250, Corridor);
+                DisplayImage(F1, Corridor);
+                Sleep(200);
 
         //Sahneyi Goruntule
         DisplayImage(F1, Corridor);
