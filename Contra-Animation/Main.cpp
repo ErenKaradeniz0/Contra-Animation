@@ -49,7 +49,6 @@ void PrintAgent(int x, int y, int state, int Agent_phase)
     }
     else if (state == 2) //ko?ma
     {
-
             if (Agent_phase % 6 == 0) Copy(AgentX3, 1, 127, 55, 109, AgentCurrent);
             if (Agent_phase % 6 == 1) Copy(AgentX3, 53, 127, 62, 109, AgentCurrent);;
             if (Agent_phase % 6 == 2) Copy(AgentX3, 112, 127, 67, 109, AgentCurrent);
@@ -69,7 +68,6 @@ void PrintAgent(int x, int y, int state, int Agent_phase)
     }
     PasteNon0(AgentCurrent, x, y, Corridor); // Screen
 }
-
 
 void* ScreenControllerThread(LPVOID lpParam)
 {
