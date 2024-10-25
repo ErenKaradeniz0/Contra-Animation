@@ -40,33 +40,46 @@ void SetState(int &oldState,int newState) {
 
 void PrintAgent(int x, int y, int state, int Agent_phase)
 {
-    if (state == 0) //hide
-        return;
+    //if (state == 0) //hide
+    //    return;
 
-    else if (state == 1) //durma
-    {
-        Copy(AgentX3, 1, 20, 75, 109, AgentCurrent);
-    }
-    else if (state == 2) //ko?ma
-    {
-            if (Agent_phase % 6 == 0) Copy(AgentX3, 1, 127, 55, 109, AgentCurrent);
-            if (Agent_phase % 6 == 1) Copy(AgentX3, 53, 127, 62, 109, AgentCurrent);;
-            if (Agent_phase % 6 == 2) Copy(AgentX3, 112, 127, 67, 109, AgentCurrent);
-            if (Agent_phase % 6 == 3) Copy(AgentX3, 175, 127, 54, 109, AgentCurrent);
-            //Contra takımına selam
-            if (Agent_phase % 6 == 4) Copy(AgentX3, 230, 127, 56, 109, AgentCurrent);
-            if (Agent_phase % 6 == 5) Copy(AgentX3, 283, 127, 68, 109, AgentCurrent);
+    //else if (state == 1) //durma
+    //{
+    //    Copy(AgentX3, 1, 20, 75, 109, AgentCurrent);
+    //}
+    //else if (state == 2) //ko?ma
+    //{
+    //        if (Agent_phase % 6 == 0) Copy(AgentX3, 1, 127, 55, 109, AgentCurrent);
+    //        if (Agent_phase % 6 == 1) Copy(AgentX3, 53, 127, 62, 109, AgentCurrent);;
+    //        if (Agent_phase % 6 == 2) Copy(AgentX3, 112, 127, 67, 109, AgentCurrent);
+    //        if (Agent_phase % 6 == 3) Copy(AgentX3, 175, 127, 54, 109, AgentCurrent);
+    //        //Contra takımına selam
+    //        if (Agent_phase % 6 == 4) Copy(AgentX3, 230, 127, 56, 109, AgentCurrent);
+    //        if (Agent_phase % 6 == 5) Copy(AgentX3, 283, 127, 68, 109, AgentCurrent);
 
-    }
-    else if (state == 3) { //takla
+    //}
+    //else if (state == 3) { //takla
 
-        if (Agent_phase % 4 == 0) Copy(AgentX3, 345, 150, 60, 75, AgentCurrent);
-        else if (Agent_phase % 4 == 1) Copy(AgentX3, 405, 150, 60, 75, AgentCurrent);
-        else if (Agent_phase % 4 == 2) Copy(AgentX3, 465, 150, 60, 75, AgentCurrent);
-        else if (Agent_phase % 4 == 3) Copy(AgentX3, 525, 150, 60, 75, AgentCurrent);
+    //    if (Agent_phase % 4 == 0) Copy(AgentX3, 345, 150, 60, 75, AgentCurrent);
+    //    else if (Agent_phase % 4 == 1) Copy(AgentX3, 405, 150, 60, 75, AgentCurrent);
+    //    else if (Agent_phase % 4 == 2) Copy(AgentX3, 465, 150, 60, 75, AgentCurrent);
+    //    else if (Agent_phase % 4 == 3) Copy(AgentX3, 525, 150, 60, 75, AgentCurrent);
 
-    }
-    PasteNon0(AgentCurrent, x, y, Corridor); // Screen
+    //}
+    
+    Copy(AgentX3, 832, 150, 60, 75, AgentCurrent);     //Red Flip 1
+    Copy(AgentX3, 772, 150, 60, 75, AgentCurrent);     //Red Flip 2
+    Copy(AgentX3, 712, 150, 60, 75, AgentCurrent);     //Red Flip 3
+    Copy(AgentX3, 652, 150, 60, 75, AgentCurrent);     //Red Flip 4
+
+    Copy(AgentX3, 237, 77, 100, 50, AgentCurrent); //Mavi Eğilen 1
+    Copy(AgentX3, 337, 80, 100, 50, AgentCurrent); // Mavi Eğilen 2 (Ateş etme)
+
+    Copy(AgentX3, 1160, 20, 75, 109, AgentCurrent); // Kırmızı Duran
+    Copy(AgentX3, 1088, 20, 75, 109, AgentCurrent); // Kırmız Duran (Ateş etme)
+
+    Paste(AgentCurrent, Agent_x, Agent_y, Corridor);
+    //PasteNon0(AgentCurrent, x, y, Corridor); // Screen
 }
 
 void* ScreenControllerThread(LPVOID lpParam)
@@ -91,7 +104,7 @@ void* ScreenControllerThread(LPVOID lpParam)
 void* LoadAgentRun(LPVOID lpParam) {
     SetState(Agent_state, 1);
     Sleep(1000);
-    while (!animation_paused) { // Animasyon duraklatýlmamýþsa devam et
+    while (animation_paused) { // Animasyon duraklatýlmamýþsa devam et
         x = 1; y = 10;Agent_x = 10;Agent_y = 250;
         int c = 1;
         Copy(Map, x, y, 800, 450, Corridor);
@@ -164,7 +177,7 @@ void ICGUI_main() {
 
     ReadImage("sprites/sprites.bmp", Agent);
     MagnifyX3(Agent, AgentX3);
-    DisplayImage(F1, Corridor);
+   // DisplayImage(F1, Corridor);
 
     //BMP Pixel TEST
     Copy(Map, x, y, 800, 450, Corridor);
@@ -172,10 +185,10 @@ void ICGUI_main() {
     //Copy(AgentX3, 405, 150, 60, 75, AgentCurrent);   //Flip 2
     //Copy(AgentX3, 465, 150, 60, 75, AgentCurrent     //Flip 3
     //Copy(AgentX3, 525, 150, 60, 75, AgentCurrent     //Flip 4
+    //Copy(AgentX3, 525, 150, 60, 75, AgentCurrent);     //Flip 4
     //PasteNon0(AgentCurrent, Agent_x, Agent_y, Corridor);
-    DisplayImage(F1, Corridor);
-    DisplayImage(F1, Corridor);
-    Sleep(1000);
+    //DisplayImage(F1, Corridor);
+    //Sleep(1000);
 
     F2 = ICG_FrameThin(10, 5, 20, 20);
     DisplayImage(F2, Agent);
