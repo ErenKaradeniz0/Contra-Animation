@@ -47,7 +47,7 @@ void PrintAgent(int x, int y, int state, int Agent_phase)
 
     }
     else if (state == 3) {
-        
+
         if (Agent_phase % 4 == 0) {
             Agent_x += 60;
             Agent_y -= 50;
@@ -64,7 +64,7 @@ void PrintAgent(int x, int y, int state, int Agent_phase)
             Agent_x += 60;
             Agent_y += 50;
             Copy(AgentX3, 465, 150, 60, 75, AgentCurrent);     //Flip 3
-        }   
+        }
         if (Agent_phase % 4 == 3) {
             Agent_x += 60;
             Copy(AgentX3, 525, 150, 60, 75, AgentCurrent);     //Flip 4
@@ -88,11 +88,9 @@ void* ScreenControllerThread(LPVOID lpParam)
 
         //Mapteki Objeler Çizilecek
 
-                Copy(Map, x, y, 800, 450, Corridor);
-                Copy(AgentX3, 465, 150, 60, 75, AgentStanding);   //Flip 3
-                PasteNon0(AgentStanding, Agent_x, 250, Corridor);
-                DisplayImage(F1, Corridor);
-                Sleep(200);
+        //Karakterler Çizilecek
+        PrintAgent(Agent_x, Agent_y, Agent_state, Agent_phase);
+        // Projectilelar Çizilecek
 
         //Sahneyi Goruntule
         DisplayImage(F1, Corridor);
@@ -109,7 +107,7 @@ void* LoadAgentRun(LPVOID lpParam) {
         // Copy(AgentX3, 1, 127, 55, 109, AgentCurrent); //Duran Adam
 
         for (int i = 0; i < 6; i++) {
-        Agent_state = 2;
+            Agent_state = 2;
 
             if (animation_paused)
                 return NULL;
@@ -122,8 +120,8 @@ void* LoadAgentRun(LPVOID lpParam) {
                 Agent_state = 3;
                 Sleep(150);
             }
-            if (Agent_state == 1) { 
-                break; 
+            if (Agent_state == 1) {
+                break;
             }
         }
     }
