@@ -169,14 +169,15 @@ void ICGUI_main() {
     DisplayImage(F1, Corridor);
 
     //BMP Pixel TEST
-    //Copy(Map, x, y, 800, 450, Corridor);
+    Copy(Map, x, y, 800, 450, Corridor);
     //Copy(AgentX3, 345, 150, 60, 75, AgentCurrent);   //Flip 1
     //Copy(AgentX3, 405, 150, 60, 75, AgentCurrent);   //Flip 2
     //Copy(AgentX3, 465, 150, 60, 75, AgentCurrent     //Flip 3
     //Copy(AgentX3, 525, 150, 60, 75, AgentCurrent     //Flip 4
     //PasteNon0(AgentCurrent, Agent_x, Agent_y, Corridor);
-    //DisplayImage(F1, Corridor);
-    //Sleep(1000);
+    DisplayImage(F1, Corridor);
+
+    Sleep(1000);
 
     F2 = ICG_FrameThin(10, 5, 20, 20);
     DisplayImage(F2, Agent);
