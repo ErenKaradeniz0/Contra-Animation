@@ -182,7 +182,7 @@ void ICGUI_main() {
 
     ICG_Button(544, 30, 160, 55, "Start/Stop Animation", StartStopAnimation);
 
-    // Test Test
+    // Test
     _CreateThread(th, ScreenControllerThread);
 }
 
