@@ -79,7 +79,7 @@ void PrintBlueAgent(int x, int y, int state, int BlueAgentPhase)
             Copy(AgentX3, 525, 150, 60, 75, BlueAgentCurrent);
         }
     }
-    PasteNon0(BlueAgentCurrent, x, y, Corridor); // Screen
+    PasteNon0(BlueAgentCurrent, BlueAgentX, BlueAgentY, Corridor); // Screen
 }
 
 
@@ -118,7 +118,7 @@ void PrintRedAgent(int x, int y, int state, int RedAgentPhase) {
     //Copy(AgentX3, 1088, 20, 75, 109, BlueAgentCurrent); // Kırmız Duran (Ateş etme)
 
     //Paste(BlueAgentCurrent, BlueAgentX, BlueAgentY, Corridor);
-    PasteNon0(RedAgentCurrent, x, y-50, Corridor); // Screen
+    PasteNon0(RedAgentCurrent, RedAgentX, RedAgentY, Corridor); // Screen
 }
 void* ScreenControllerThread(LPVOID lpParam)
 {
@@ -146,7 +146,7 @@ void* LoadAgentRun(LPVOID lpParam) {
     while (!animation_paused) { // Animasyon duraklatýlmamýþsa devam et
         x = 1; y = 10;
         BlueAgentX = 10;BlueAgentY = 250;
-        RedAgentX = 830;RedAgentY = 250;
+        RedAgentX = 830;RedAgentY = 200;
         int c = 1;
         Copy(Map, x, y, 800, 450, Corridor);
 
