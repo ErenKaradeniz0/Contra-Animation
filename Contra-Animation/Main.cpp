@@ -1,7 +1,7 @@
-#include "icb_gui.h"
+ï»¿#include "icb_gui.h"
 
 
-bool animation_paused = true;  // Animasyonu duraklatmak için yeni flag
+bool animation_paused = true;  // Animasyonu duraklatmak iÃ§in yeni flag
 HANDLE hThread = NULL;  // Thread handle
 HANDLE th = NULL;
 
@@ -37,6 +37,7 @@ void SetState(int &oldState,int newState) {
         Agent_phase++;
     }
 }
+
 void PrintAgent(int x, int y, int state, int Agent_phase)
 {
     if (state == 0) //hide
@@ -44,32 +45,27 @@ void PrintAgent(int x, int y, int state, int Agent_phase)
 
     else if (state == 1) //durma
     {
-        Copy(AgentX3, 1, 127, 55, 109, AgentCurrent);
+        Copy(AgentX3, 1, 20, 75, 109, AgentCurrent);
     }
-    else if (state == 2) //animasyon
+    else if (state == 2) //ko?ma
     {
-            if (Agent_phase % 5 == 0) Copy(AgentX3, 53, 127, 62, 109, AgentCurrent);
-            if (Agent_phase % 5 == 1) Copy(AgentX3, 112, 127, 67, 109, AgentCurrent);
-            if (Agent_phase % 5 == 2) Copy(AgentX3, 175, 127, 54, 109, AgentCurrent);
-            if (Agent_phase % 5 == 3) Copy(AgentX3, 230, 127, 56, 109, AgentCurrent);
-            if (Agent_phase % 5 == 4) Copy(AgentX3, 283, 127, 68, 109, AgentCurrent);
+
+            if (Agent_phase % 6 == 0) Copy(AgentX3, 1, 127, 55, 109, AgentCurrent);
+            if (Agent_phase % 6 == 1) Copy(AgentX3, 53, 127, 62, 109, AgentCurrent);;
+            if (Agent_phase % 6 == 2) Copy(AgentX3, 112, 127, 67, 109, AgentCurrent);
+            if (Agent_phase % 6 == 3) Copy(AgentX3, 175, 127, 54, 109, AgentCurrent);
+            //Contra takÄ±mÄ±na selam
+            if (Agent_phase % 6 == 4) Copy(AgentX3, 230, 127, 56, 109, AgentCurrent);
+            if (Agent_phase % 6 == 5) Copy(AgentX3, 283, 127, 68, 109, AgentCurrent);
 
     }
-    else if (state == 3) {
+    else if (state == 3) { //takla
 
-        if (Agent_phase % 4 == 0) {
-            Copy(AgentX3, 345, 150, 60, 75, AgentCurrent);     //Flip 1
-        }
-        if (Agent_phase % 4 == 1) {
-            Copy(AgentX3, 405, 150, 60, 75, AgentCurrent);     //Flip 2
-        }
-        if (Agent_phase % 4 == 2)
-        {
-            Copy(AgentX3, 465, 150, 60, 75, AgentCurrent);     //Flip 3
-        }
-        if (Agent_phase % 4 == 3) {
-            Copy(AgentX3, 525, 150, 60, 75, AgentCurrent);     //Flip 4
-        }
+        if (Agent_phase % 4 == 0) Copy(AgentX3, 345, 150, 60, 75, AgentCurrent);
+        else if (Agent_phase % 4 == 1) Copy(AgentX3, 405, 150, 60, 75, AgentCurrent);
+        else if (Agent_phase % 4 == 2) Copy(AgentX3, 465, 150, 60, 75, AgentCurrent);
+        else if (Agent_phase % 4 == 3) Copy(AgentX3, 525, 150, 60, 75, AgentCurrent);
+
     }
     PasteNon0(AgentCurrent, x, y, Corridor); // Screen
 }
@@ -80,13 +76,13 @@ void* ScreenControllerThread(LPVOID lpParam)
     while (true)
     {
         Copy(Map, x, y, 800, 450, Corridor);
-        // Arkaplan çizilecek
+        // Arkaplan Ã§izilecek
 
-        //Mapteki Objeler Çizilecek
+        //Mapteki Objeler Ã‡izilecek
 
-        //Karakterler Çizilecek
+        //Karakterler Ã‡izilecek
         PrintAgent(Agent_x, Agent_y, Agent_state, Agent_phase);
-        // Projectilelar Çizilecek
+        // Projectilelar Ã‡izilecek
 
         //Sahneyi Goruntule
         DisplayImage(F1, Corridor);
@@ -97,22 +93,18 @@ void* ScreenControllerThread(LPVOID lpParam)
 void* LoadAgentRun(LPVOID lpParam) {
     SetState(Agent_state, 1);
     Sleep(1000);
-    while (!animation_paused) { // Animasyon duraklatýlmamýþsa devam et
+    while (!animation_paused) { // Animasyon duraklatÃ½lmamÃ½Ã¾sa devam et
         x = 1; y = 10;Agent_x = 10;Agent_y = 250;
         int c = 1;
         Copy(Map, x, y, 800, 450, Corridor);
 
-        for (int i = 0; i < 12; i++) {
-            SetState(Agent_state, 2);
-
-
+        SetState(Agent_state, 2);
+        for (int i = 0; i < 12; i++) { //walk
             if (animation_paused)
                 return NULL;
-
             x += 40;
-            Agent_phase++;
             Sleep(150);
-           
+            Agent_phase++;
         }
         SetState(Agent_state, 3);
         for (int i = 0; i < 4; i++) {
@@ -136,34 +128,33 @@ void* LoadAgentRun(LPVOID lpParam) {
                 break;
             }
             Agent_phase++;
-            Sleep(150);
+            Sleep(250);
         }
-        for (int i = 0; i < 4; i++) {
-            SetState(Agent_state, 2);
-
-
-            if (animation_paused)
-                return NULL;
-
-            x += 40;
-            Agent_phase++;
-            Sleep(150);
-
-        }
+        //Extra walk
+        //SetState(Agent_state, 2);
+        //for (int i = 0; i < 8; i++) { // walk
+        //    if (animation_paused)
+        //        return NULL;
+        //    x += 40;
+        //    Agent_phase++;
+        //    Sleep(150);
+        //}
+        SetState(Agent_state, 1);
+        Sleep(500);
     }
     return 0;
 }
 
-// Animasyonu baþlat ve durdur
+// Animasyonu baÃ¾lat ve durdur
 void StartStopAnimation() {
 
     //
     animation_paused = !animation_paused;
 
-    // Eðer daha önce bir thread baþlatýlmýþsa, önce onu sonlandýr
+    // EÃ°er daha Ã¶nce bir thread baÃ¾latÃ½lmÃ½Ã¾sa, Ã¶nce onu sonlandÃ½r
     _WaitThread(hThread);
 
-    // Yeni thread baþlat
+    // Yeni thread baÃ¾lat
     _CreateThread(hThread, LoadAgentRun);
 }
 
@@ -192,7 +183,7 @@ void ICGUI_main() {
 
     ICG_Button(544, 30, 160, 55, "Start/Stop Animation", StartStopAnimation);
 
-    // Yeni thread baþlat
+    // Yeni thread baÃ¾lat
     _CreateThread(th, ScreenControllerThread);
 }
 
