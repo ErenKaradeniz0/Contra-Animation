@@ -28,6 +28,15 @@ void ICGUI_Create() {
 // 2 run
 //currentScene
 
+void SetState(int &oldState,int newState) {
+    if (oldState != newState) {
+    oldState = newState;
+    Agent_phase = 0;
+    }
+    else {
+        Agent_phase++;
+    }
+}
 void PrintAgent(int x, int y, int state, int Agent_phase)
 {
     if (state == 0) //hide
@@ -39,41 +48,28 @@ void PrintAgent(int x, int y, int state, int Agent_phase)
     }
     else if (state == 2) //animasyon
     {
-        if (Agent_phase % 5 == 0) Copy(AgentX3, 53, 127, 62, 109, AgentCurrent);
-        if (Agent_phase % 5 == 1) Copy(AgentX3, 112, 127, 67, 109, AgentCurrent);
-        if (Agent_phase % 5 == 2) Copy(AgentX3, 175, 127, 54, 109, AgentCurrent);
-        if (Agent_phase % 5 == 3) Copy(AgentX3, 230, 127, 56, 109, AgentCurrent);
-        if (Agent_phase % 5 == 4) Copy(AgentX3, 283, 127, 68, 109, AgentCurrent);
+            if (Agent_phase % 5 == 0) Copy(AgentX3, 53, 127, 62, 109, AgentCurrent);
+            if (Agent_phase % 5 == 1) Copy(AgentX3, 112, 127, 67, 109, AgentCurrent);
+            if (Agent_phase % 5 == 2) Copy(AgentX3, 175, 127, 54, 109, AgentCurrent);
+            if (Agent_phase % 5 == 3) Copy(AgentX3, 230, 127, 56, 109, AgentCurrent);
+            if (Agent_phase % 5 == 4) Copy(AgentX3, 283, 127, 68, 109, AgentCurrent);
 
     }
     else if (state == 3) {
 
         if (Agent_phase % 4 == 0) {
-            Agent_x += 60;
-            Agent_y -= 50;
             Copy(AgentX3, 345, 150, 60, 75, AgentCurrent);     //Flip 1
         }
         if (Agent_phase % 4 == 1) {
-            Agent_x += 60;
-            Agent_y -= 50;
             Copy(AgentX3, 405, 150, 60, 75, AgentCurrent);     //Flip 2
-
         }
         if (Agent_phase % 4 == 2)
         {
-            Agent_x += 60;
-            Agent_y += 50;
             Copy(AgentX3, 465, 150, 60, 75, AgentCurrent);     //Flip 3
         }
         if (Agent_phase % 4 == 3) {
-            Agent_x += 60;
             Copy(AgentX3, 525, 150, 60, 75, AgentCurrent);     //Flip 4
-            Agent_state = 1;
         }
-        Agent_phase++;
-
-
-        Sleep(100);
     }
     PasteNon0(AgentCurrent, x, y, Corridor); // Screen
 }
@@ -99,15 +95,16 @@ void* ScreenControllerThread(LPVOID lpParam)
 
 // Animasyon fonksiyonu
 void* LoadAgentRun(LPVOID lpParam) {
-    Agent_state = 1;
+    SetState(Agent_state, 1);
     Sleep(1000);
     while (!animation_paused) { // Animasyon duraklatýlmamýþsa devam et
+        x = 1; y = 10;Agent_x = 10;Agent_y = 250;
         int c = 1;
         Copy(Map, x, y, 800, 450, Corridor);
-        // Copy(AgentX3, 1, 127, 55, 109, AgentCurrent); //Duran Adam
 
-        for (int i = 0; i < 6; i++) {
-            Agent_state = 2;
+        for (int i = 0; i < 12; i++) {
+            SetState(Agent_state, 2);
+
 
             if (animation_paused)
                 return NULL;
@@ -115,14 +112,43 @@ void* LoadAgentRun(LPVOID lpParam) {
             x += 40;
             Agent_phase++;
             Sleep(150);
-            if (x == 401) {
-                Agent_phase = 0;
-                Agent_state = 3;
-                Sleep(150);
-            }
-            if (Agent_state == 1) {
+           
+        }
+        SetState(Agent_state, 3);
+        for (int i = 0; i < 4; i++) {
+            switch (Agent_phase) {
+            case 0:
+                Agent_x += 60;
+                Agent_y -= 50;
+                break;
+            case 1:
+                Agent_x += 60;
+                Agent_y -= 50;
+                break;
+            case 2:
+                Agent_x += 60;
+                Agent_y += 50;
+                break;
+            case 3:
+                Agent_x += 60;
+                Agent_y -= 50;
+                Agent_state = 1;
                 break;
             }
+            Agent_phase++;
+            Sleep(150);
+        }
+        for (int i = 0; i < 4; i++) {
+            SetState(Agent_state, 2);
+
+
+            if (animation_paused)
+                return NULL;
+
+            x += 40;
+            Agent_phase++;
+            Sleep(150);
+
         }
     }
     return 0;
@@ -169,7 +195,6 @@ void ICGUI_main() {
     // Yeni thread baþlat
     _CreateThread(th, ScreenControllerThread);
 }
-
 
 void _WaitThread(HANDLE thread)
 {
