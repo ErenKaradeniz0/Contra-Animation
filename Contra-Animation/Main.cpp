@@ -2,6 +2,7 @@
 bool animation_paused = true;  // Animasyonu duraklatmak için yeni flag
 HANDLE hThread = NULL;  // Thread handle
 HANDLE th = NULL;
+HANDLE tmusic = NULL;
 
 int F1, F2;
 ICBYTES Map, Corridor, AgentBMP, AgentBMPX3;
@@ -42,6 +43,7 @@ void ICGUI_Create() {
 void SetState(Agent& agent, AgentState newState) {
     if (agent.State != newState) {
         agent.State = newState;
+        agent.phase = 0;
     }
     else {
         agent.phase++;
@@ -160,6 +162,11 @@ void* ScreenControllerThread(LPVOID lpParam)
     }
 }
 
+void* MusicControllerThread(LPVOID lpParam) {
+    while(true)
+    PlaySound("JungleTheme.wav", NULL, SND_SYNC);
+}
+
 // Animasyon fonksiyonu
 void* LoadAgentRun(LPVOID lpParam) {
     SetState(BlueAgent, STAND);
@@ -271,6 +278,8 @@ void ICGUI_main() {
 
     // Test
     _CreateThread(th, ScreenControllerThread);
+    _CreateThread(tmusic, MusicControllerThread);
+
 }
 
 void _WaitThread(HANDLE thread)
