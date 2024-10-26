@@ -7,10 +7,8 @@ HANDLE TMusic = NULL;
 int F1, F2;
 ICBYTES Map, Corridor, AgentBMP, AgentBMPX3;
 ICBYTES BlueAgentCurrent;
-ICBYTES BlueBulletCurrent;
 
 ICBYTES RedAgentCurrent;
-ICBYTES RedAgentBullet;
 
 int x = 1, y = 10;
 
@@ -23,25 +21,29 @@ enum AgentState {
     DEATH,
     CROUCH
 };
+struct Bullet {
+    bool active;
+    int x;
+    int y;
+    int speed;
+    ICBYTES bulletCurrent;
+};
 
 struct Agent {
     int x;
     int y;
     int phase;
     AgentState State;
+    Bullet bullet;
 };
 
-struct Bullet {
-    int x;
-    int y;
-    int speed;
-};
 
-Bullet BlueBullet = {300,210,38};
+Bullet BlueBullet = {false, 300, 210, 38};
+Bullet RedBullet = {false, 580, 185, -38};
 
-// Agent türünden iki değişken oluşturuyoruz
-Agent BlueAgent = { 10, 250, 0, HIDE };
-Agent RedAgent = { 830, 200, 0, HIDE };
+Agent BlueAgent = { 10, 250, 0, HIDE, BlueBullet };
+Agent RedAgent = { 830, 200, 0, HIDE, RedBullet };
+
 void _WaitThread(HANDLE thread);
 void _CreateThread(HANDLE thread, void* threadMain);
 
@@ -56,11 +58,14 @@ void SetState(Agent& agent, AgentState newState) {
     if (agent.State != newState || newState != SHOOT) {
         agent.State = newState;
         agent.phase = 0;
+        if (newState == SHOOT) {
+            agent.bullet.active = true; // Agent'in bullet aktif durumu güncelleniyor
+        }
     }
     else {
         agent.phase++;
     }
-    }
+}
 
 ICBYTES BlueCoordinates{
     {1, 20, 75, 109},    // Blue Stand
@@ -94,7 +99,6 @@ void PrintBlueAgent(int x, int y, AgentState state, int phase) {
     case FLIP: // Takla
         index = 8 + (phase % 4); // 8, 9, 10, 11 based on phase
         break;
-
     case SHOOT: // Ateş etme
         break;
     case DEATH: // Ölüm
@@ -170,11 +174,11 @@ void PrintRedAgent(int x, int y, int state, int phase) {
 }
 
 void PrintBullet(Bullet& bullet) {
-    if (bullet.x <= 608) {
-    Copy(AgentBMPX3, 266, 26, 19, 19, BlueBulletCurrent);
-    bullet.x += bullet.speed;
-    PasteNon0(BlueBulletCurrent, bullet.x, bullet.y, Corridor);
-    Sleep(150);
+    if (bullet.active && bullet.x <= 800) {
+        Copy(AgentBMPX3, 266, 26, 19, 19, bullet.bulletCurrent);
+        bullet.x += bullet.speed;
+        PasteNon0(bullet.bulletCurrent, bullet.x, bullet.y, Corridor);
+        Sleep(150);
     }
 
 }
@@ -189,8 +193,8 @@ void* ScreenControllerThread(LPVOID lpParam)
 
         //Karakterler Çizilecek
         PrintBlueAgent(BlueAgent.x, BlueAgent.y, BlueAgent.State, BlueAgent.phase);
-        if(BlueAgent.State == SHOOT)
-            PrintBullet(BlueBullet);
+        PrintBullet(BlueAgent.bullet);
+        PrintBullet(RedAgent.bullet);
 
         PrintRedAgent(RedAgent.x, RedAgent.y, RedAgent.State, RedAgent.phase);
         // Projectilelar Çizilecek
@@ -202,8 +206,8 @@ void* ScreenControllerThread(LPVOID lpParam)
 
 void* MusicControllerThread(LPVOID lpParam) {
     PlaySound("sound/Intro.wav", NULL, SND_SYNC);
-    while(true)
-        if(!animation_paused)
+    while (true)
+        if (!animation_paused)
             PlaySound("sound/JungleTheme.wav", NULL, SND_SYNC);
 }
 
@@ -214,11 +218,15 @@ void* LoadAnimation(LPVOID lpParam) {
     while (!animation_paused) { // Animasyon duraklatýlmamýþsa devam et
         //reset scene
         x = 1; y = 10;
-        BlueAgent.x = 10;BlueAgent.y = 250;
-        RedAgent.x = 830;RedAgent.y = 200;
-        BlueBullet.x = 300;
-
         Copy(Map, x, y, 800, 450, Corridor);
+
+        BlueAgent.x = 10; BlueAgent.y = 250;
+        RedAgent.x = 830; RedAgent.y = 200;
+        BlueAgent.bullet.x = 300;
+        RedAgent.bullet.x = 580;
+        BlueAgent.bullet.active = false;
+        RedAgent.bullet.active = false;
+
 
         SetState(BlueAgent, RUN);
         for (int i = 0; i < 12; i++) { //walk
@@ -228,7 +236,7 @@ void* LoadAnimation(LPVOID lpParam) {
             Sleep(150);
             BlueAgent.phase++;
         }
-        SetState(BlueAgent,FLIP);
+        SetState(BlueAgent, FLIP);
         SetState(RedAgent, FLIP);
         for (int i = 0; i < 4; i++) {
             switch (BlueAgent.phase % 4) {
@@ -262,7 +270,6 @@ void* LoadAnimation(LPVOID lpParam) {
             RedAgent.phase++;
 
             Sleep(250);
-            int a = 5;
         }
         //Extra walk
         //SetState(BlueAgent.State, 2);
@@ -275,37 +282,46 @@ void* LoadAnimation(LPVOID lpParam) {
         //}
         SetState(BlueAgent, STAND);
         SetState(RedAgent, STAND);
-        
+
+        SetState(RedAgent, SHOOT);
+        Sleep(500);
+
         SetState(BlueAgent, CROUCH);
         BlueAgent.y += 50;
         Sleep(200);
 
         SetState(BlueAgent, SHOOT);
-        //SetState(RedAgent, SHOOT);
         for (int i = 0; i < 8; i++) {
             // Move up if i is even, down if i is odd
             BlueAgent.y += (i % 2 == 0) ? -3 : 3;
             Sleep(150);
         }
-        Sleep(100);
-        SetState(RedAgent, DEATH);
-        for (int i = 0; i < 3; i++) {
-            switch (i % 3) { //(RedAgent.phase % 3)
-            case 0:
-                RedAgent.x += 50;
+        while (true) {
+            Sleep(200);
+            if (BlueAgent.bullet.x > RedAgent.x + 40)
                 break;
-            case 1:
-                RedAgent.x += 20;
-                RedAgent.y += 30;
-                break;
-            case 2:
-                RedAgent.x += 50;
-                RedAgent.y += 40;
-                break;
-            }
-            Sleep(250);
-            RedAgent.phase++;
+
         }
+        BlueAgent.bullet.active = false;
+            SetState(RedAgent, DEATH);
+            for (int i = 0; i < 3; i++) {
+                switch (i % 3) { //(RedAgent.phase % 3)
+                case 0:
+                    RedAgent.x += 50;
+                    break;
+                case 1:
+                    RedAgent.x += 20;
+                    RedAgent.y += 30;
+                    break;
+                case 2:
+                    RedAgent.x += 50;
+                    RedAgent.y += 40;
+                    break;
+                }
+                Sleep(250);
+                RedAgent.phase++;
+        }
+
     }
     return 0;
 }
@@ -331,9 +347,9 @@ void ICGUI_main() {
 
     ReadImage("sprites/sprites.bmp", AgentBMP);
     MagnifyX3(AgentBMP, AgentBMPX3);
-   // DisplayImage(F1, Corridor);
+    // DisplayImage(F1, Corridor);
 
-    //BMP Pixel TEST
+     //BMP Pixel TEST
     Copy(Map, x, y, 800, 450, Corridor);
     //Copy(AgentBMPX3, 345, 150, 60, 75, BlueAgentCurrent);   //Flip 1
     //Copy(AgentBMPX3, 405, 150, 60, 75, BlueAgentCurrent);   //Flip 2
