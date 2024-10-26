@@ -147,8 +147,13 @@ void PrintRedAgent(int x, int y, int state, int phase) {
         //index = (phase % 2 == 0) ? 5 : 6; // 5 for Red Stand (Fire), 6 for Red Stand
         break;
 
-    case DEATH: // Ölüm
-        return;
+    case DEATH: // ölüm
+        switch (phase) {
+        case 0: Copy(AgentBMPX3, 880, 266, 48, 72, RedAgentCurrent); break; // Red Death 1 +
+        case 1: Copy(AgentBMPX3, 932, 282, 74, 48, RedAgentCurrent); break; // Red Death 2
+        case 2: Copy(AgentBMPX3, 634, 309, 102, 35, RedAgentCurrent); break; // Red Death 3 +
+        }
+        break;
 
     case CROUCH: // Eğilme
         return;
@@ -287,6 +292,8 @@ void* LoadAnimation(LPVOID lpParam) {
         RedAgent.phase++;
         BlueAgent.phase++;
         Sleep(500);
+
+
     }
     return 0;
 }
