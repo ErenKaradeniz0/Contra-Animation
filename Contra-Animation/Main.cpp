@@ -1,8 +1,8 @@
 ﻿#include "icb_gui.h"
 bool animation_paused = true;  // Animasyonu duraklatmak için yeni flag
-HANDLE hThread = NULL;  // Thread handle
-HANDLE th = NULL;
-HANDLE tmusic = NULL;
+HANDLE TAnimation = NULL;  // Thread handle
+HANDLE TScreen = NULL;
+HANDLE TMusic = NULL;
 
 int F1, F2;
 ICBYTES Map, Corridor, AgentBMP, AgentBMPX3;
@@ -163,12 +163,14 @@ void* ScreenControllerThread(LPVOID lpParam)
 }
 
 void* MusicControllerThread(LPVOID lpParam) {
+    PlaySound("sound/Intro.wav", NULL, SND_SYNC);
     while(true)
-    PlaySound("JungleTheme.wav", NULL, SND_SYNC);
+        if(!animation_paused)
+            PlaySound("sound/JungleTheme.wav", NULL, SND_SYNC);
 }
 
 // Animasyon fonksiyonu
-void* LoadAgentRun(LPVOID lpParam) {
+void* LoadAnimation(LPVOID lpParam) {
     SetState(BlueAgent, STAND);
     Sleep(1000);
     while (!animation_paused) { // Animasyon duraklatýlmamýþsa devam et
@@ -244,10 +246,10 @@ void StartStopAnimation() {
     animation_paused = !animation_paused;
 
     // Eðer daha önce bir thread baþlatýlmýþsa, önce onu sonlandýr
-    _WaitThread(hThread);
+    _WaitThread(TAnimation);
 
     // Yeni thread baþlat
-    _CreateThread(hThread, LoadAgentRun);
+    _CreateThread(TAnimation, LoadAnimation);
 }
 
 void ICGUI_main() {
@@ -277,16 +279,16 @@ void ICGUI_main() {
     ICG_Button(544, 30, 160, 55, "Start/Stop Animation", StartStopAnimation);
 
     // Test
-    _CreateThread(th, ScreenControllerThread);
-    _CreateThread(tmusic, MusicControllerThread);
+    _CreateThread(TScreen, ScreenControllerThread);
+    _CreateThread(TMusic, MusicControllerThread);
 
 }
 
 void _WaitThread(HANDLE thread)
 {
     if (thread != NULL) {
-        WaitForSingleObject(hThread, INFINITE);
-        CloseHandle(hThread);
+        WaitForSingleObject(TAnimation, INFINITE);
+        CloseHandle(TAnimation);
     }
     thread = NULL;
 }
