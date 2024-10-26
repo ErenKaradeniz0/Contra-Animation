@@ -146,6 +146,9 @@
     <Image Include="sprites\mapShort.bmp" />
     <Image Include="sprites\sprites.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="JungleTheme .wav" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
