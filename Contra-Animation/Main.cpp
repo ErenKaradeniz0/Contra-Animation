@@ -1,27 +1,34 @@
 ﻿#include "icb_gui.h"
-
-
 bool animation_paused = true;  // Animasyonu duraklatmak için yeni flag
 HANDLE hThread = NULL;  // Thread handle
 HANDLE th = NULL;
 
-
 int F1, F2;
-ICBYTES Map, Corridor, Agent, AgentX3;
+ICBYTES Map, Corridor, AgentBMP, AgentBMPX3;
 ICBYTES BlueAgentCurrent;
 ICBYTES RedAgentCurrent;
 int x = 1, y = 10;
-int BlueAgentX = 10;
-int BlueAgentY = 250;
-int BlueAgentState = 0;
-int BlueAgentPhase = 0;
 
-int RedAgentX = 830;
-int RedAgentY = 200;
-int RedAgentState = 0;
-int RedAgentPhase = 0;
+enum AgentState {
+    HIDE = 0,
+    STAND,
+    RUN,
+    FLIP,
+    SHOOT,
+    DEATH,
+    CROUCH
+};
 
+struct Agent {
+    int x;
+    int y;
+    int phase;
+    AgentState State;
+};
 
+// Agent türünden iki değişken oluşturuyoruz
+Agent BlueAgent = { 10, 250, 0, HIDE };
+Agent RedAgent = { 830, 200, 0, HIDE };
 void _WaitThread(HANDLE thread);
 void _CreateThread(HANDLE thread, void* threadMain);
 
@@ -30,95 +37,109 @@ void ICGUI_Create() {
     ICG_MWTitle("Contra");
 }
 
-// 0 hide
-// 1 stand
-// 2 run
-//currentScene
 
-void SetState(int &oldState,int newState) {
-    if (oldState != newState) {
-    oldState = newState;
-    BlueAgentPhase = 0;
+
+void SetState(Agent& agent, AgentState newState) {
+    if (agent.State != newState) {
+        agent.State = newState;
     }
     else {
-        BlueAgentPhase++;
+        agent.phase++;
     }
-}
+    }
 
-void PrintBlueAgent(int x, int y, int state, int BlueAgentPhase)
+void PrintBlueAgent(int x, int y, AgentState state, int phase)
 {
-    if (state == 0) //hide
+
+    switch (state) {
+    case HIDE: // saklanma
         return;
+    case STAND: // durma
+        Copy(AgentBMPX3, 1, 20, 75, 109, BlueAgentCurrent);
+        break;
 
-    else if (state == 1) //durma
-    {
-        Copy(AgentX3, 1, 20, 75, 109, BlueAgentCurrent);
-    }
-    else if (state == 2) //ko?ma
-    {
-            if (BlueAgentPhase % 6 == 0) Copy(AgentX3, 1, 127, 55, 109, BlueAgentCurrent);
-            if (BlueAgentPhase % 6 == 1) Copy(AgentX3, 53, 127, 62, 109, BlueAgentCurrent);;
-            if (BlueAgentPhase % 6 == 2) Copy(AgentX3, 112, 127, 67, 109, BlueAgentCurrent);
-            if (BlueAgentPhase % 6 == 3) Copy(AgentX3, 175, 127, 54, 109, BlueAgentCurrent);
-            //Contra takımına selam
-            if (BlueAgentPhase % 6 == 4) Copy(AgentX3, 230, 127, 56, 109, BlueAgentCurrent);
-            if (BlueAgentPhase % 6 == 5) Copy(AgentX3, 283, 127, 68, 109, BlueAgentCurrent);
+    case RUN: // koşma
+        switch (phase % 6) {
+        case 0: Copy(AgentBMPX3, 1, 127, 55, 109, BlueAgentCurrent); break;
+        case 1: Copy(AgentBMPX3, 53, 127, 62, 109, BlueAgentCurrent); break;
+        case 2: Copy(AgentBMPX3, 112, 127, 67, 109, BlueAgentCurrent); break;
+        case 3: Copy(AgentBMPX3, 175, 127, 54, 109, BlueAgentCurrent); break;
+        case 4: Copy(AgentBMPX3, 230, 127, 56, 109, BlueAgentCurrent); break;
+        case 5: Copy(AgentBMPX3, 283, 127, 68, 109, BlueAgentCurrent); break;
+        }
+        break;
 
+    case FLIP: // takla
+        switch (phase % 4) {
+        case 0: Copy(AgentBMPX3, 345, 150, 60, 75, BlueAgentCurrent); break;
+        case 1: Copy(AgentBMPX3, 405, 150, 60, 75, BlueAgentCurrent); break;
+        case 2: Copy(AgentBMPX3, 465, 150, 60, 75, BlueAgentCurrent); break;
+        case 3: Copy(AgentBMPX3, 525, 150, 60, 75, BlueAgentCurrent); break;
+        }
+        break;
+
+    case SHOOT: // ateş etme
+        break;
+
+    case DEATH: // ölüm
+        break;
+
+    case CROUCH: // eğilme
+        break;
+
+    default:
+        break;
     }
-    else if (state == 3) { //takla
-        if (BlueAgentPhase % 4 == 0) { 
-            Copy(AgentX3, 345, 150, 60, 75, BlueAgentCurrent);
-        }
-        else if (BlueAgentPhase % 4 == 1) { 
-            Copy(AgentX3, 405, 150, 60, 75, BlueAgentCurrent);
-        }
-        else if (BlueAgentPhase % 4 == 2) { 
-            Copy(AgentX3, 465, 150, 60, 75, BlueAgentCurrent);
-        }
-        else if (BlueAgentPhase % 4 == 3) { 
-            Copy(AgentX3, 525, 150, 60, 75, BlueAgentCurrent);
-        }
-    }
-    PasteNon0(BlueAgentCurrent, BlueAgentX, BlueAgentY, Corridor); // Screen
+
+    PasteNon0(BlueAgentCurrent, BlueAgent.x, BlueAgent.y, Corridor); // Screen
 }
 
 
-void PrintRedAgent(int x, int y, int state, int RedAgentPhase) {
+void PrintRedAgent(int x, int y, int state, int phase) {
 
-    if (state == 0) //hide
+    switch (state) {
+    case HIDE:
         return;
 
-    else if (state == 1) //durma
-    {
-        Copy(AgentX3, 1160, 20, 75, 109, RedAgentCurrent); // Kırmızı Duran
-    }
-    else if (state == 2) //ko?ma
-    {
-        //Kırmızı kosma yok
-    }
-    else if (state == 3) { //takla
-        if (RedAgentPhase % 1 == 0) {
-            Copy(AgentX3, 712, 150, 60, 75, RedAgentCurrent);     //Red Flip 3
+    case STAND: // durma
+        Copy(AgentBMPX3, 1160, 20, 75, 109, RedAgentCurrent); // Kırmızı Duran
+        break;
+
+    case RUN: // koşma
+        // Kırmızı koşma yok
+        break;
+
+    case FLIP: // takla
+        switch (phase % 4) {
+        case 0: Copy(AgentBMPX3, 712, 150, 60, 75, RedAgentCurrent); break; // Red Flip 3
+        case 1: Copy(AgentBMPX3, 652, 150, 60, 75, RedAgentCurrent); break; // Red Flip 4
+        case 2: Copy(AgentBMPX3, 772, 150, 60, 75, RedAgentCurrent); break; // Red Flip 2
+        case 3: Copy(AgentBMPX3, 1160, 20, 75, 109, RedAgentCurrent); break; // Red Flip 1
         }
-        else if (RedAgentPhase % 2 == 1) {
-            Copy(AgentX3, 652, 150, 60, 75, RedAgentCurrent);     //Red Flip 4
-        }
-        else if (RedAgentPhase % 3 == 2) {
-            Copy(AgentX3, 772, 150, 60, 75, RedAgentCurrent);     //Red Flip 2
-        }
-        else if (RedAgentPhase % 4 == 3) {
-            Copy(AgentX3, 1160, 20, 75, 109, RedAgentCurrent);     //Red Flip 1
-        }
+        break;
+
+    case SHOOT: // ateş etme
+        break;
+
+    case DEATH: // ölüm
+        break;
+
+    case CROUCH: // eğilme
+        break;
+
+    default:
+        break;
     }
 
-    //Copy(AgentX3, 237, 77, 100, 50, BlueAgentCurrent); //Mavi Eğilen 1
-    //Copy(AgentX3, 337, 80, 100, 50, BlueAgentCurrent); // Mavi Eğilen 2 (Ateş etme)
 
-    //Copy(AgentX3, 1160, 20, 75, 109, BlueAgentCurrent); // Kırmızı Duran
-    //Copy(AgentX3, 1088, 20, 75, 109, BlueAgentCurrent); // Kırmız Duran (Ateş etme)
+    //Copy(AgentBMPX3, 237, 77, 100, 50, BlueAgentCurrent); //Mavi Eğilen 1
+    //Copy(AgentBMPX3, 337, 80, 100, 50, BlueAgentCurrent); // Mavi Eğilen 2 (Ateş etme)
 
-    //Paste(BlueAgentCurrent, BlueAgentX, BlueAgentY, Corridor);
-    PasteNon0(RedAgentCurrent, RedAgentX, RedAgentY, Corridor); // Screen
+    //Copy(AgentBMPX3, 1160, 20, 75, 109, BlueAgentCurrent); // Kırmızı Duran
+    //Copy(AgentBMPX3, 1088, 20, 75, 109, BlueAgentCurrent); // Kırmız Duran (Ateş etme)
+
+    //Paste(BlueAgentCurrent, BlueAgent.x, BlueAgent.y, Corridor);
+    PasteNon0(RedAgentCurrent, RedAgent.x, RedAgent.y, Corridor); // Screen
 }
 void* ScreenControllerThread(LPVOID lpParam)
 {
@@ -130,8 +151,8 @@ void* ScreenControllerThread(LPVOID lpParam)
         //Mapteki Objeler Çizilecek
 
         //Karakterler Çizilecek
-        PrintBlueAgent(BlueAgentX, BlueAgentY, BlueAgentState, BlueAgentPhase);
-        PrintRedAgent(RedAgentX, RedAgentY, RedAgentState, RedAgentPhase);
+        PrintBlueAgent(BlueAgent.x, BlueAgent.y, BlueAgent.State, BlueAgent.phase);
+        PrintRedAgent(RedAgent.x, RedAgent.y, RedAgent.State, RedAgent.phase);
         // Projectilelar Çizilecek
 
         //Sahneyi Goruntule
@@ -141,70 +162,69 @@ void* ScreenControllerThread(LPVOID lpParam)
 
 // Animasyon fonksiyonu
 void* LoadAgentRun(LPVOID lpParam) {
-    SetState(BlueAgentState, 1);
+    SetState(BlueAgent, STAND);
     Sleep(1000);
     while (!animation_paused) { // Animasyon duraklatýlmamýþsa devam et
         x = 1; y = 10;
-        BlueAgentX = 10;BlueAgentY = 250;
-        RedAgentX = 830;RedAgentY = 200;
+        BlueAgent.x = 10;BlueAgent.y = 250;
+        RedAgent.x = 830;RedAgent.y = 200;
         int c = 1;
         Copy(Map, x, y, 800, 450, Corridor);
 
-        SetState(BlueAgentState, 2);
+        SetState(BlueAgent, RUN);
         for (int i = 0; i < 12; i++) { //walk
             if (animation_paused)
                 return NULL;
             x += 40;
             Sleep(150);
-            BlueAgentPhase++;
+            BlueAgent.phase++;
         }
-        SetState(BlueAgentState, 3);
-        SetState(RedAgentState, 3);
+        SetState(BlueAgent,FLIP);
+        SetState(RedAgent, FLIP);
         for (int i = 0; i < 4; i++) {
-            switch (BlueAgentPhase) {
+            switch (BlueAgent.phase % 4) {
             case 0:
-                BlueAgentX += 60;
-                BlueAgentY -= 50;
+                BlueAgent.x += 60;
+                BlueAgent.y -= 50;
 
-                RedAgentX -= 70;
+                RedAgent.x -= 70;
                 break;
             case 1:
-                BlueAgentX += 60;
-                BlueAgentY -= 50;
+                BlueAgent.x += 60;
+                BlueAgent.y -= 50;
 
-                RedAgentX -= 70;
+                RedAgent.x -= 70;
                 break;
             case 2:
-                BlueAgentX += 60;
-                BlueAgentY += 50;
+                BlueAgent.x += 60;
+                BlueAgent.y += 50;
 
-                RedAgentX -= 70;
+                RedAgent.y -= 50;
+                RedAgent.x -= 70;
                 break;
             case 3:
-                BlueAgentX += 60;
-                BlueAgentY -= 50;
-
-                RedAgentY -= 50;
-                SetState(BlueAgentState, 1);
-                SetState(RedAgentState, 1);
+                BlueAgent.x += 60;
+                BlueAgent.y -= 50;
+                SetState(BlueAgent, STAND);
+                SetState(RedAgent, STAND);
                 break;
             }
-            BlueAgentPhase++;
-            RedAgentPhase++;
+            BlueAgent.phase++;
+            RedAgent.phase++;
 
             Sleep(250);
         }
         //Extra walk
-        //SetState(BlueAgentState, 2);
+        //SetState(BlueAgent.State, 2);
         //for (int i = 0; i < 8; i++) { // walk
         //    if (animation_paused)
         //        return NULL;
         //    x += 40;
-        //    BlueAgentPhase++;
+        //    BlueAgent.phase++;
         //    Sleep(150);
         //}
-        SetState(BlueAgentState, 1);
-        SetState(RedAgentState, 1);
+        SetState(BlueAgent, STAND);
+        SetState(RedAgent, STAND);
         Sleep(500);
     }
     return 0;
@@ -229,23 +249,23 @@ void ICGUI_main() {
     Copy(Map, x, y, 800, 450, Corridor);
     DisplayImage(F1, Corridor);
 
-    ReadImage("sprites/sprites.bmp", Agent);
-    MagnifyX3(Agent, AgentX3);
+    ReadImage("sprites/sprites.bmp", AgentBMP);
+    MagnifyX3(AgentBMP, AgentBMPX3);
    // DisplayImage(F1, Corridor);
 
     //BMP Pixel TEST
     Copy(Map, x, y, 800, 450, Corridor);
-    //Copy(AgentX3, 345, 150, 60, 75, BlueAgentCurrent);   //Flip 1
-    //Copy(AgentX3, 405, 150, 60, 75, BlueAgentCurrent);   //Flip 2
-    //Copy(AgentX3, 465, 150, 60, 75, BlueAgentCurrent     //Flip 3
-    //Copy(AgentX3, 525, 150, 60, 75, BlueAgentCurrent     //Flip 4
-    //Copy(AgentX3, 525, 150, 60, 75, BlueAgentCurrent);     //Flip 4
-    //PasteNon0(BlueAgentCurrent, BlueAgentX, BlueAgentY, Corridor);
+    //Copy(AgentBMPX3, 345, 150, 60, 75, BlueAgentCurrent);   //Flip 1
+    //Copy(AgentBMPX3, 405, 150, 60, 75, BlueAgentCurrent);   //Flip 2
+    //Copy(AgentBMPX3, 465, 150, 60, 75, BlueAgentCurrent     //Flip 3
+    //Copy(AgentBMPX3, 525, 150, 60, 75, BlueAgentCurrent     //Flip 4
+    //Copy(AgentBMPX3, 525, 150, 60, 75, BlueAgentCurrent);     //Flip 4
+    //PasteNon0(BlueAgentCurrent, BlueAgent.x, BlueAgent.y, Corridor);
     //DisplayImage(F1, Corridor);
     //Sleep(1000);
 
     F2 = ICG_FrameThin(10, 5, 20, 20);
-    DisplayImage(F2, Agent);
+    DisplayImage(F2, AgentBMP);
 
     ICG_Button(544, 30, 160, 55, "Start/Stop Animation", StartStopAnimation);
 
