@@ -116,11 +116,14 @@ void PrintBlueAgent(int x, int y, AgentState state, int phase) {
 
 ICBYTES RedCoordinates{
     {1160, 20, 75, 109}, // Red Stand 
-    {712, 150, 60, 75},   // Red Flip 3 (phase 0)
-    {652, 150, 60, 75},   // Red Flip 4 (phase 1)
-    {772, 150, 60, 75},   // Red Flip 2 (phase 2)
-    {1160, 20, 75, 109},   // Red Flip 1 (phase 3)
-    {1088, 20, 75, 109}  // Red Stand (Fire) (phase 0)
+    {712, 150, 60, 75},  // Red Flip 3 (phase 0)
+    {652, 150, 60, 75},  // Red Flip 4 (phase 1)
+    {772, 150, 60, 75},  // Red Flip 2 (phase 2)
+    {1160, 20, 75, 109}, // Red Flip 1 (phase 3)
+    {1088, 20, 75, 109}, // Red Stand (Fire) (phase 0)
+    {880, 266, 48, 72},  // Red Death 1 +
+    {932, 282, 74, 48},  // Red Death 2
+    {634, 309, 102, 35}  // Red Death 3 +
 };
 
 void PrintRedAgent(int x, int y, int state, int phase) {
@@ -144,15 +147,11 @@ void PrintRedAgent(int x, int y, int state, int phase) {
         break;
 
     case SHOOT: // Ateş etme
-        //index = (phase % 2 == 0) ? 5 : 6; // 5 for Red Stand (Fire), 6 for Red Stand
+        index = (phase % 2 == 0) ? 6 : 7; // 6 for Red Stand (Fire), 1 for Red Stand
         break;
 
     case DEATH: // ölüm
-        switch (phase) {
-        case 0: Copy(AgentBMPX3, 880, 266, 48, 72, RedAgentCurrent); break; // Red Death 1 +
-        case 1: Copy(AgentBMPX3, 932, 282, 74, 48, RedAgentCurrent); break; // Red Death 2
-        case 2: Copy(AgentBMPX3, 634, 309, 102, 35, RedAgentCurrent); break; // Red Death 3 +
-        }
+        index = 7 + (phase % 3);
         break;
 
     case CROUCH: // Eğilme
@@ -288,12 +287,25 @@ void* LoadAnimation(LPVOID lpParam) {
             BlueAgent.y += (i % 2 == 0) ? -3 : 3;
             Sleep(150);
         }
-
-        RedAgent.phase++;
-        BlueAgent.phase++;
-        Sleep(500);
-
-
+        Sleep(100);
+        SetState(RedAgent, DEATH);
+        for (int i = 0; i < 3; i++) {
+            switch (i % 3) { //(RedAgent.phase % 3)
+            case 0:
+                RedAgent.x += 50;
+                break;
+            case 1:
+                RedAgent.x += 20;
+                RedAgent.y += 30;
+                break;
+            case 2:
+                RedAgent.x += 50;
+                RedAgent.y += 40;
+                break;
+            }
+            Sleep(250);
+            RedAgent.phase++;
+        }
     }
     return 0;
 }
