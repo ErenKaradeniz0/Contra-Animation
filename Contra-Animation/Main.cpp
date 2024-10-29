@@ -204,11 +204,26 @@ void* ScreenControllerThread(LPVOID lpParam)
     }
 }
 
+bool isPlayingJungleTheme = false;
 void* MusicControllerThread(LPVOID lpParam) {
-    PlaySound("sound/Intro.wav", NULL, SND_SYNC);
-    while (true)
-        if (!animation_paused)
-            PlaySound("sound/JungleTheme.wav", NULL, SND_SYNC);
+    // ASYNC
+    PlaySound("sound/Intro.wav", NULL, SND_ASYNC);
+
+
+    while (true) {
+        if (!animation_paused && !isPlayingJungleTheme) {
+            // ASYNC
+            PlaySound("sound/JungleTheme.wav", NULL, SND_ASYNC | SND_LOOP);
+            isPlayingJungleTheme = true;
+        }
+        else if (animation_paused && isPlayingJungleTheme) {
+            // Stop the sound when animation is paused
+            PlaySound(NULL, NULL, SND_PURGE);
+            isPlayingJungleTheme = false;
+        }
+
+        Sleep(100);
+    }
 }
 
 // Animasyon fonksiyonu
