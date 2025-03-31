@@ -21,6 +21,7 @@ A C++ animation project inspired by Contra Game (1987), utilizing the **ICBYTES*
 
 👤 **Eren Karadeniz** - [GitHub](https://github.com/ErenKaradeniz0)  
 👤 **Ulas Deniz Cakmazel** - [GitHub](https://github.com/UlasDenizCakmazel)
+👤 **Sevval Gur** - [GitHub](https://github.com/svvlgr)
 
 ## License
 
