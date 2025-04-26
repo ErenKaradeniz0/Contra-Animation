@@ -17,6 +17,11 @@ A C++ animation project inspired by Contra Game (1987), utilizing the **ICBYTES*
    git clone https://github.com/ErenKaradeniz0/Contra-Animation.git
    cd Contra-Animation
    
+## Images
+![Resim 1](images/1.png)
+![Resim 2](images/2.png)
+![Resim 3](images/3.png)
+
 ## Contributors
 
 👤 **Eren Karadeniz** - [GitHub](https://github.com/ErenKaradeniz0)  
