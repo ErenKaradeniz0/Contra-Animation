@@ -4,8 +4,8 @@ A C++ animation project inspired by Contra Game (1987), utilizing the **ICBYTES*
 
 ## Features
 
-- 🎮 **Contra-style Animation** with smooth character movements
-- 🎼 **Sound Effects & Music** (Stops when animation stops)
+- 🎮 **Contra-style Animation**
+- 🎼 **Sound Effects & Music**
 - 🔄 **Endless Animation Loop**
 - 🖼 **Intro Scene** included
 - 🛠 **Thread-based Animation Control**
@@ -16,6 +16,10 @@ A C++ animation project inspired by Contra Game (1987), utilizing the **ICBYTES*
    ```bash
    git clone https://github.com/ErenKaradeniz0/Contra-Animation.git
    cd Contra-Animation
+
+2. Install the **ICbytes** library if it's not already installed:
+   - Visit [ICbytes official documentation](https://otoidrak.com/doc/I-See-Bytes%20A%20Simplified%20C++%20Library.pdf) for installation instructions.
+   - Visit [ICbytes Main Page](https://otoidrak.com/Yazilim.html)
    
 ## Images
 ![Resim 1](images/1.png)
