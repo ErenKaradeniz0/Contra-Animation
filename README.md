@@ -22,9 +22,9 @@ A C++ animation project inspired by Contra Game (1987), utilizing the **ICBYTES*
    - Visit [ICbytes Main Page](https://otoidrak.com/Yazilim.html)
    
 ## Images
-![Resim 1](images/1.png)
-![Resim 2](images/2.png)
-![Resim 3](images/3.png)
+![Image 1](images/1.png)
+![Image 2](images/2.png)
+![Image 3](images/3.png)
 
 ## Contributors
 
